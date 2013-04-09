@@ -1,0 +1,30 @@
+<?php
+
+class Application_Form_Connexion extends Zend_Form{
+	
+	public function __construct($options = null){
+		parent::__construct($options);
+		
+		$this->setName('Connexion');
+		
+		$login =  new Zend_Form_Element_Text('login');
+		$login->setLabel('Identifiant :')
+		->setRequired(true)
+		->addFilter('StripTags')
+		->addFilter('StringTrim');
+		$login->setAttrib('placeholder','Identifiant');
+
+		$mdp =  new Zend_Form_Element_Password('mdp');
+		$mdp->setLabel('Mot de passe :')
+		->setRequired(true)
+		->addFilter('StripTags')
+		->addFilter('StringTrim');
+		$mdp->setAttrib('placeholder','password');
+		
+		$submit = new Zend_Form_Element_Submit('submit');
+		$submit->setAttrib('class','btn btn-primary')->setLabel('Connexion');
+		
+		$this->addElements(array($login,$mdp,$submit));
+			
+	}
+}

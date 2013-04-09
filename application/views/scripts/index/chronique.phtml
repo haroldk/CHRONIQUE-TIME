@@ -1,0 +1,281 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/apple-slide.css');  ?>"/>
+<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/apple-slide2.js');?>"></script>
+
+<script>
+  $(function() {
+	  
+	  $( "#commenter" ).live('click',function(){
+	    $( "#dialog-comm" ).dialog({
+		    
+	      height: 500,
+	      width: 500,
+	      show: "fade",
+	      option: "hide",
+	      hide: "drop",
+	      modal: true
+	      
+	    });
+      });
+	  $( "#btn-connexion" ).live('click',function(){
+	    $( "#dialog-connexion" ).dialog({
+	      height: 270,
+	      width: 350,
+	      show: "fade",
+	      option: "hide",
+	      hide: "explode",
+	      modal: true
+	    });
+      });
+	  $( ".partager" ).live('click',function(){
+	    $( "#partager-chronique" ).dialog({
+	      height: 230,
+	      width: 330,
+	      show: "fade",
+	      option: "hide",
+	      hide: "explode",
+	      modal: true
+	    });
+      });
+	  $( ".signaler" ).live('click',function(){
+	    $( "#signaler-chronique" ).dialog({
+	      height: 285,
+	      width: 330,
+	      show: "fade",
+	      option: "hide",
+	      hide: "explode",
+	      modal: true
+	    });
+      });
+      
+	  $(".reco").click(function(){
+		  
+			var id_chr = $(this).attr('id').split('_');
+		    var id = id_chr['1'];
+		    
+			$.ajax({
+				url : '<?php echo $this->baseUrl('ajax/recommandation');?>',
+				type : 'post',
+				data : {
+					id_chronique : id
+				},
+				success:function(data){
+					
+					 $( "#recomm-ok" ).dialog({
+					      height: 280,
+					      width: 300,
+					      show: "fade",
+					      option: "hide",
+					      hide: "explode",
+					      modal: true
+					    });
+					    
+				},
+				error:function(xhr, desc, err){alert(xhr);}
+		  }); 
+			  
+	  });
+
+
+	  $( ".menuItem" ).live('click',function(){
+
+		  	var num = $('.pg-btn',this).html();
+		    var idc = '<?php echo $this->chronique->num; ?>';
+		  	var img = '<?php echo $this->baseUrl('images/pages/'); ?>'+idc+'_'+num+'.jpg';
+
+		  	$('.top-img').attr('src',img).effect("slide");
+
+			$.ajax({
+				
+				url : '<?php echo $this->baseUrl('ajax/commentaires');?>',
+				type : 'post',
+				data : { id_chronique : idc, num_page : num },
+				success:function(data){ $("div#comm-ajax").html(data); },
+				error:function(xhr, desc, err){ alert(xhr); }
+				
+		  });
+
+	  });
+
+
+	  $("#note img").mouseenter(function(){
+		  
+	        var name_class = $(this).attr('class').split('_');
+	        var position = name_class[1];
+			var url = <?php echo $this->baseUrl('img/general'); ?>;
+			alert(url);
+	        $("#note img").each(function(i){
+	            var name_class = $(this).attr('class').split('_');
+	            var Temp = name_class[1];
+	            if(Temp <= position){
+	            	this.src = url+"/star_full.png";
+	            }
+	        });
+	        
+	         $("#note img").mouseleave(function(){
+	             $("#note img").attr('src',url+'/star_empty.png');
+	         });
+
+	    });
+
+	  
+  });
+</script>
+
+<div id="top-chronique">
+	<div>
+		<div id="top-img"><img alt="chronique time - <?php echo $this->chronique->titre; ?>" src="<?php echo $this->baseUrl('images/pages/').$this->chronique->num.'_1.jpg';?>" class="top-img" width="424" height="273"/> </div>
+		<div id="top-right">
+			<H3 class="top-title"><?php echo $this->chronique->titre; ?></H3>
+			<div>
+				<p>Publié par &nbsp;<span class="black italic bold"><?php echo $this->chronique->chroniqueur; ?></span></p>
+				<p>Thème :&nbsp;<span class="black italic bold"><?php echo $this->chronique->theme; ?></span></p>
+				<p><img alt="chronique time" src="<?php echo $this->baseUrl('img/general/icon_commentaire.png');?>" /> &nbsp;<span class="black italic bold" style="margin-left: 35px;"><?php echo $this->chronique->commentaires; ?> commentaires</span></p>
+				<br />
+				<iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2FCHRONIQUE-TIME.fr%2Fpublic%2Findex%2Fchronique&amp;send=false&amp;layout=standard&amp;width=200&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=35&amp;appId=151983048230591" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:auto; max-width:250px; height:35px;" allowTransparency="true"></iframe>
+				<?php if($this->pseudo){ ?>
+				<button class="btn reco" id="c_<?php echo $this->chronique->num; ?>">RECOMMANDER</button>
+				<?php } ?>
+				<button class="partager" title="partager la chronique"></button>
+				<div id="note" class="article_<?php echo $this->article['id_article']?>"> <?php 
+					for($z=1;$z<6;$z++){
+	                   echo  '<img src="'.$this->baseUrl('img/general/star_empty.png').'" width="20" alt="star" class="star_'.$z.'" />';
+	                }?>
+                </div>
+			</div>
+		</div>
+	</div>
+</div><!-- end top-chro-->
+
+
+<div id="wrapper">
+	<div>
+		<div id="chronique-txt">
+			<div id="main">
+				<div id="gallery" style="width: 750px;">
+				
+	  		  		<div id="slides" style="width: 750px; height: auto; min-height: 400px;" >
+						<?php $i=0; foreach ($this->pages as $p) { $i++; ?>
+						
+					    	<div class="slide" style="width: 750px;"><?php echo $p->texte; ?></div>
+							
+						<?php } ?>		
+		  			</div>
+	    
+				    <div id="menu" class="pagination">
+					    <ul id="pagination-btn">
+					        <li class="menuItem"><a href="" class="first img-slide pg-btn">1</a></li>
+					        <?php for($n=2; $n<=$i; $n++) { ?>
+					        <li class="menuItem"><a href="" class="img-slide pg-btn"><?php echo $n; ?></a></li>
+					        <?php } ?>
+					    </ul>
+				    </div>
+				    
+			  </div>
+			</div>
+		</div><!-- end chronique-txt-->
+
+		<div id="chronique-side">
+			
+		  	<?php  
+	  			//module connexion/compte => Index.init()
+				echo $this->compte;
+				$n=0; foreach ($this->commentaires as $com ) { $n++; }
+		  	?>
+		  	<div id="comm-ajax">
+				<p class="bleu acenter bold f13">COMMENTAIRES</p>	
+				<div id="comm-side"> <span class="sup">(<?php echo $n; ?>)</span><?php 
+				
+					foreach ($this->commentaires as $com ) { ?>
+						<p>
+							<span class="pseudo-comm bleu f11 bold"><?php echo $com->pseudo; ?></span><br />				
+							<span class="date-comm rose f11 italic">publié le <?php echo $com->publication; ?></span>	
+							<br /><br />			
+							<span class="txt-comm f11" ><?php echo $com->comm; ?></span>
+						</p><?php 
+					} ?>
+						
+				</div><!-- end comm-side-->
+			</div><!-- end comm-ajax-->
+			 <?php if($this->pseudo){  ?>
+				<button class="signaler" title="signaler un abus"></button>
+			 
+				<p id="commenter" class="rose commenter">Commenter !</p>	<br />
+				
+		 	 <?php }else{	?>
+		 	 
+				<p class="rose commenter"><a href="<?php echo $this->baseUrl('index/inscription'); ?>" title="inscription">Inscrit toi !!</a></p>	 
+				
+			<?php } ?>
+			
+			<!-- SIGNALER CHRONIK OK -->
+			<div id="signaler-ok" class="none alert alert-block">
+				<p>Votre signale a bien été pris en compte, merci de votre prévention.</p>
+			</div>
+			
+			<div id="chron-similaires">
+				<p class="bleu acenter bold f13 maj">CHRONIQUES <?php echo $this->chronique->theme; ?></p>
+				<?php foreach ($this->similaires as $c) {?>
+					<p class="chro-similaire"><a href="<?php echo $this->baseUrl('index/chronique/id/'.$c->id); ?>" title="<?php echo $c->titre; ?>"><?php echo $c->titre; ?></a></p>
+				<?php }	?>
+			</div><!-- end chron-similaires-->
+			
+			<br />
+			
+			<div id="index-theme">
+				<p class="bleu acenter index-side-title">THÈMES</p>
+				<?php 
+				foreach ($this->themes as $th) { ?>
+					<button><a href="<?php echo $th->id; ?>" title="<?php echo $th->libele; ?>"><?php echo $th->libele; ?></a></button>
+				<?php 
+				}	?>
+			</div><!-- end index-theme-->
+		</div><!-- end chronique-side-->
+	
+	</div>
+</div><!-- end wrapper-->
+
+
+<!-- COMMENTER CHRONIQUE -->
+<div id="dialog-comm" title="Nouveau commentaire : ">
+	<br />
+	<?php echo $this->newCom; ?> <br /><br />
+	<p class="acenter italic">Sachez bien que vous restez le responsable des commentaires que vous soumettez<br />et en portez l'entière responsabilité</p>
+</div>
+<!-- COMMENTAIRE POSTER -->
+<div id="CmOk" class="none acenter" title="Commentaire">
+	<br /><br />
+	Votre commentaire a été posté avec succès !
+</div>
+<!-- PARTAGER CHRONIQUE -->
+<div id="partager-chronique" class="none" title="PARTAGER">
+	<br />
+	<p class="acenter">La chronique va être partagée à vos contact : </p>
+	<?php echo $this->form_partager; ?>
+</div>
+<!-- PARTAGER CHRONI OK -->
+<div id="partage-ok" class="none" title="Envoyer">
+	<br />
+	<p class="acenter">La chronique actuelle a bien été partagée à vos contact mentionnées </p>
+</div>
+<!-- SIGNALER CHRONIQUE -->
+<div id="signaler-chronique" class="none" title="Signaler un abus">
+	<br />
+	<p class="acenter">Vous souhaitez signaler un abus concernant cette chronique ?</p> <br />
+	<form id="Abus" enctype="application/x-www-form-urlencoded" action="" method="post">
+		<input type="hidden" name="id-abus" value="<?php echo $this->chronique->num; ?>" id="id-abus">
+		<textarea rows="38" cols="40" id="motif-abus" name="motif-abus" placeholder="Motif de l'abus..."></textarea><br /><br />
+		<input type="submit" name="submit" id="submit-abus" value="Signaler" class="btn btn-warning" style="margin-left: 120px;">
+	</form>
+</div>
+
+<!-- RECOMMENDATION OK -->
+<div id="recomm-ok" class="none">
+	<p>Votre recommendation sur cette chronique a bien été prise en compte !</p>
+</div>
+
+<!-- MODUL CONNEXION ! -->
+<div id="dialog-connexion" class="none" title="Connectez-vous : ">
+	<br />
+	<?php echo $this->connexion; ?><a href="" title="mot de passe oublié" class="mdplost">Mot de passe oublié</a>
+</div>
+			

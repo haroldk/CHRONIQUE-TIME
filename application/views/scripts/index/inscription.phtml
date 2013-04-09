@@ -1,0 +1,89 @@
+<script type="text/javascript">
+<!-- 
+$( document ).ready(function() {
+
+	/*$('input').live('mouseup',function(){
+
+		
+		$(this).tooltip(
+				animation: true
+				  , placement: 'top'
+				  , selector: false
+				  , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+				  , trigger: 'hover focus'
+				  , title: ''
+				  , delay: 0
+				  , html: false
+				  , container: false
+		);
+
+		$(this).tooltip('show');
+	});*/
+
+	
+	$('#validLect').live('click',function(){ 
+
+		var Check = $(this);
+		if (Check.is (':checked')) {
+			$('#submitL').removeClass('disabled');
+			$('#submitL').removeAttr('disabled');
+		}else{
+			$('#submitL').addClass('disabled');
+			$('#submitL').attr('disabled','true');
+		}
+
+	});
+
+	$('#validChro').live('click',function(){ 
+
+		var Check = $(this);
+		if (Check.is (':checked')) {
+			$('#submitC').removeClass('disabled');
+			$('#submitC').removeAttr('disabled');
+		}else{
+			$('#submitC').addClass('disabled');
+			$('#submitC').attr('disabled','true');
+		}
+
+	});
+	
+});
+-->
+</script>
+
+<div id="top-wrapper"></div>
+<div id="wrapper" class="border-top">
+	<div>
+	
+	<img alt="inscription chronique time" src="<?php echo $this->baseUrl('img/inscription/inscription_txt.png'); ?>" class="insc-img" />
+
+	<?php echo $this->msg; ?>
+	<div id="div-L">
+		<?php echo $this->Lecteur; ?>
+		<p class="radio"><input type="checkbox" value="validLect" name="validLect" id="validLect" /> J'accèpte les&nbsp;<a href="<?php echo $this->baseUrl('index/cgu'); ?>" title="CGU">conditions générales d'utilisation*</a></p>
+		<p class="acenter ps">Inscrivez-vous en tant que Lecteur si vous souhaitez tout simplement lire les chroniques</p>
+	</div>
+
+ 	<div id="div-C">  
+		<?php echo $this->Chroniqueur; ?>
+ 		<p class="radio"><input type="checkbox" value="validChro" name="validChro" id="validChro" /> J'accèpte les&nbsp;<a href="<?php echo $this->baseUrl('index/cgu'); ?>" title="CGU">conditions générales d'utilisation*</a></p>
+		<p class="acenter ps">Inscrivez-vous en tant que Chroniqueur si vous souhaitez tout bonnement diffuser vos chroniques</p>
+	</div>  
+	
+	
+	
+	</div>
+</div><!-- end wrapper -->
+
+<div id="mail-exist" class="none" title="Erreur d'enregistrement"><br/>
+	<p class="acenter">L'adresse mail que vous avez renseigné est déja utilisée par un utilisateur, veuillez en saisir une nouvelle.</p>
+</div>
+<div id="login-exist" class="none" title="Erreur d'enregistrement"><br/>
+	<p class="acenter">Le pseudo que vous avez renseigné est déja utilisé par un utilisateur précédement enregistré,<br /> veuillez en saisir un nouveau.</p>
+</div>
+<div id="mdp-diff" class="none" title="Erreur d'enregistrement"><br />
+	<p class="acenter">Veuillez confirmer votre mot de passe avec un code identique au premier.</p>
+</div>
+
+
+

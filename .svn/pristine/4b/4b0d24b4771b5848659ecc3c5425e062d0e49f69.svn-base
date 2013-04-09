@@ -1,0 +1,1265 @@
+<?php
+
+require_once(dirname(__FILE__)."/../../public/scripts/class.upload_0.32/class.upload.php");
+
+class AdminController extends Zend_Controller_Action {
+	
+
+    public function init() {
+    	
+    	$this->initView();
+    	$this->view->baseUrl = $this->_request->getBaseUrl();
+    	$this->_helper->layout->setLayout("layout_back");	
+    	
+    }
+    
+    
+	function indexAction() {
+		
+		
+
+	}
+    
+	function chroniquesAction() {
+		
+		//liste chroniques
+		$current_chron = '0';
+		$chroniques = new Application_Model_DbTable_Chroniques();
+		$select = $chroniques->select();
+		$select->setIntegrityCheck(false)
+				->from(array('c'=>'chroniques'), array('c.id as num','c.titre as titre','c.date_publication as date','c.note as note','c.signal_abus as abus','c.nb_vue as visites','c.valid as valid'))
+				->joinLeft(array('t'=>'themes'), 'c.id_theme = t.id', array('t.libele as theme'))
+				->joinLeft(array('k'=>'users'), 'c.id_chroniqueur = k.id', array('k.pseudo as chroniqueur'))
+				->joinLeft(array('q'=>'commentaires'), 'c.id = q.id_chronique', array('COUNT(DISTINCT q.id) as commentaires'))
+				->joinLeft(array('p'=>'chroniques_pages'), 'c.id = p.id_chronique', array('COUNT(DISTINCT p.id) as pages'))
+				->limitPage($current_chron, '12')
+				->order('c.id DESC')
+				->group(array('c.id','p.id_chronique','q.id_chronique')); 
+		$chroniques = $chroniques->fetchAll($select);
+		/*$select->setIntegrityCheck(false)
+				->from(array('c'=>'chroniques'), array('num'=>'c.id','titre'=>'c.titre','date'=>'c.date_publication','note'=>'c.note','abus'=>'c.signal_abus','commentaires'=>'COUNT(q.id)','pages'=>'COUNT(p.id)','visites'=>'c.nb_vue','chroniqueur'=>'k.pseudo','theme'=>'t.libele'))
+				->joinLeft(array('t'=>'themes'), 'c.id_theme = t.id', array())
+				->joinLeft(array('k'=>'chroniqueurs'), 'c.id_chroniqueur = k.id', array())
+				->joinLeft(array('q'=>'commentaires'), 'c.id = q.id_chronique', array())
+				->joinLeft(array('p'=>'chroniques_pages'), 'c.id = p.id_chronique', array())
+				->limitPage($current_chron, '20')
+				->order('c.id DESC');
+		$chroniques = $chroniques->fetchAll($select);	*/
+		$this->view->chroniques = $chroniques;
+		//pagination chroniques
+		$chroniques_count = new Application_Model_DbTable_Chroniques();
+		$select = $chroniques_count->select();
+		$select->setIntegrityCheck(false)->from('chroniques');
+		$chroniques_count = $chroniques_count->select($select);
+		$this->view->chronique_pagination = $chroniques_count;
+		
+		//liste pages
+		$current_page = '0';
+		$ch_pages = new Application_Model_DbTable_Chroniquespages();
+		$select = $ch_pages->select();
+		$select->setIntegrityCheck(false)
+				->from(array('p'=>'chroniques_pages'), array('DISTINCT(p.id) as page','p.id_chronique as chronique'))
+				->joinLeft(array('c'=>'chroniques'), 'c.id = p.id_chronique',array('c.titre as titre', 'c.date_publication as date'))
+				->joinLeft(array('t'=>'themes'), 'c.id_theme = t.id', array('t.libele as theme'))
+				->joinLeft(array('k'=>'users'), 'c.id_chroniqueur = k.id', array('k.pseudo as chroniqueur'))
+				//->joinLeft(array('q'=>'commentaires'), 'p.id_chronique = q.id_chronique AND p.id = q.id_page', array('COUNT(DISTINCT q.id) as commentaires','q.commentaire as com'))
+				->limitPage($current_page, '12')
+				->order('p.id_chronique DESC');
+		$ch_pages = $ch_pages->fetchAll($select);
+		$this->view->pages = $ch_pages;
+		//pagination pages
+		$page_count = new Application_Model_DbTable_Chroniquespages();
+		$select = $page_count->select();
+		$select->setIntegrityCheck(false)->from('chroniques_pages');
+		$page_count = $page_count->select($select);
+		$this->view->page_pagination = $page_count;
+		
+		//liste themes
+		$current_theme = '0';
+		$themes = new Application_Model_DbTable_Themes();
+		$select = $themes->select();
+		$select->setIntegrityCheck(false)
+				->from('themes')
+				->limitPage($current_theme, '12')
+				->order('id DESC');
+		$themes = $themes->fetchAll($select);
+		$this->view->themes = $themes;
+		//pagination themes
+		$theme_count = new Application_Model_DbTable_Themes();
+		$select = $theme_count->select();
+		$select->setIntegrityCheck(false)->from('themes');
+		$theme_count = $theme_count->select($select);
+		$this->view->theme_pagination = $theme_count;
+
+		//les formulaires
+		$newChronique = new Application_Form_AdminChronique(0);
+		$this->view->newChronique = $newChronique;
+		$newPage = new Application_Form_AdminPage(0);
+		$this->view->newPage = $newPage;
+		$newTheme = new Application_Form_AdminTheme(0);
+		$this->view->newTheme = $newTheme;
+		$rechchr = new Application_Form_AdminRecherche('chronique');
+		$this->view->formc = $rechchr;
+		$rechthem = new Application_Form_AdminRecherche('theme');
+		$this->view->formt = $rechthem;
+		
+		
+		//=============  MESSAGES DE CONFIRMATION  ====================//
+		
+		$conf = $this->_getParam('i');
+		
+		if( !empty($conf) && $conf == "1" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#ChOk" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:190,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "12" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#ChMd" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:170,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "2" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#PgOk" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:190,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "22" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#PgMd" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:170,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "3" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#ThOk" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:190,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "32" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#ThMd" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:170,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}
+		
+		
+	}
+		
+	
+	function newchroniqueAction() {
+		
+		//ajout chronique
+		$form = new Application_Form_AdminChronique();
+		if ($this->_request->isPost()) {
+
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				 
+				$chr = new Application_Model_DbTable_Chroniques();
+				$row = $chr->createRow();
+				$row->id_theme = $form->getValue('id_theme');
+				$row->id_chroniqueur = $form->getValue('id_chroniqueur');
+				$row->titre = stripcslashes($form->getValue('titre'));
+				$row->nb_vue = 0;
+				$row->valid = 1;
+				
+				if($row->save()){
+					
+					//upload img
+					$handle = new upload($_FILES['img']);
+					if ($handle->uploaded) {
+					
+						//Img bien uploadées
+						$handle->Process(dirname(__FILE__)."/../../public/images/");
+						if ($handle->processed) {
+						   $handle->clean();
+						// Image uploadée avec succès !
+						} else {
+					         echo $handle->error;
+						  $handle->clean();
+						}
+						
+					}
+					
+					echo $this->_redirect('admin/chroniques/i/1');
+
+				}
+			}
+		}
+		
+	}
+	function newpageAction() {
+		
+		//ajout page
+		$form = new Application_Form_AdminPage();
+		if ($this->_request->isPost()) {
+
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				 
+				$page = new Application_Model_DbTable_Chroniquespages();
+				$row = $page->createRow();
+				$row->id_chronique = $form->getValue('id_chronique');
+				$row->texte = stripcslashes($form->getValue('texte'));
+				$row->img = ( $form->getValue('img') ? "1" : "0" );
+				
+				if($row->save()){
+					
+					echo $this->_redirect('admin/chroniques/i/2');
+
+				}
+			}
+		}
+		
+	}
+	function newthemeAction() {
+		
+		//ajout thème
+		$form = new Application_Form_AdminTheme();
+		if ($this->_request->isPost()) {
+
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				 
+				$page = new Application_Model_DbTable_Themes();
+				$row = $page->createRow();
+				$row->libele = stripcslashes($form->getValue('libele'));
+				
+				if($row->save()){
+					
+					echo $this->_redirect('admin/chroniques/i/3');
+
+				}
+			}
+		}
+		
+	}
+	
+	function editAction() {
+		
+		//modif chronique
+		if($id = $this->_getParam('idc')){
+			
+			$form = new Application_Form_AdminChronique($id,'e');
+			$this->view->form = $form;
+			$this->view->action = "chroniques";
+			
+		//modif page
+		}elseif($id = $this->_getParam('idp')){
+			
+			$form = new Application_Form_AdminPage($id,'e');
+			$this->view->form = $form;
+			$this->view->action = "chroniques";
+			
+		//modif theme
+		}elseif($id = $this->_getParam('idt')){
+			
+			$form = new Application_Form_AdminTheme($id,'e');
+			$this->view->form = $form;
+			$this->view->action = "chroniques";
+			
+		//modif chroniqueur
+		}elseif($id = $this->_getParam('idk')){
+			
+			$form = new Application_Form_User($id);
+			$this->view->form = $form;
+			$this->view->action = "utilisateurs";
+			
+		//modif lecteur
+		}elseif($id = $this->_getParam('idl')){
+			
+			$form = new Application_Form_User($id);
+			$this->view->form = $form;
+			$this->view->action = "utilisateurs";
+			
+		}
+	}
+	function diffAction() {
+		
+		if($this->_getParam('cat') == "ch"){
+			
+			$id = $this->_getParam('id');
+			$vl = $this->_getParam('vl');
+			
+			$chroniques = new Application_Model_DbTable_Chroniques();
+			$chronique = $chroniques->fetchRow( array ("id = ?" => $id) );
+			
+			$data = array();
+			$data['valid'] = ($chronique->valid == "1" ? "0" : "1");
+			$where  = " id = $id ";
+				
+			if( $chroniques->update($data, $where) ){
+				
+				echo $this->_redirect('admin/chroniques');
+				
+			}
+			
+		}elseif($this->_getParam('cat') == "kr"){
+			
+			$id = $this->_getParam('id');
+			$vl = $this->_getParam('vl');
+			
+			$chroniques = new Application_Model_DbTable_Users();
+			$chronique = $chroniques->fetchRow( array ("id = ?" => $id) );
+			
+			$data = array();
+			$data['valid'] = ($chronique->valid == "1" ? "0" : "1");
+			$where  = " id = $id ";
+				
+			if( $chroniques->update($data, $where) ){
+				
+				echo $this->_redirect('admin/utilisateurs');
+				
+			}
+			
+		}elseif($this->_getParam('cat') == "lc"){
+			
+			$id = $this->_getParam('id');
+			$vl = $this->_getParam('vl');
+			
+			$lecteurs = new Application_Model_DbTable_Users();
+			$lecteur = $lecteurs->fetchRow( array ("id = ?" => $id) );
+			
+			$data = array();
+			$data['valid'] = ($lecteur->valid == "1" ? "0" : "1");
+			$where  = " id = $id ";
+				
+			if( $lecteurs->update($data, $where) ){
+				
+				echo $this->_redirect('admin/utilisateurs');
+				
+			}
+			
+		}elseif($this->_getParam('cat') == "cm"){
+			
+			$id = $this->_getParam('id');
+			$vl = $this->_getParam('vl');
+			
+			$comms = new Application_Model_DbTable_Commentaires();
+			$comm = $comms->fetchRow( array ("id = ?" => $id) );
+			
+			$data = array();
+			$data['valid'] = ($comm->valid == "1" ? "0" : "1");
+			$where  = " id = $id ";
+				
+			if( $comms->update($data, $where) ){
+				
+				echo $this->_redirect('admin/commentaires');
+				
+			}
+			
+		}
+		
+	}
+	
+											
+	function modifAction() {
+		
+		//traitement form->bdd chronique
+		if( $this->_request->isPost() && $this->_request->getPost('titre') ){
+	
+			$form = new Application_Form_AdminChronique(0);
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				
+				$id = $form->getValue('id');
+				$chroniques = new Application_Model_DbTable_Chroniques();
+				$ch = $chroniques->fetchRow ( array ("id = ?" => $id ) );
+				
+				// Données DB
+				$dataBDD = array();
+				$dataBDD['titre'] = $ch->titre;
+				$dataBDD['id_theme'] = $ch->id_theme;
+				$dataBDD['id_chroniqueur'] = $ch->id_chroniqueur;
+				
+				// Données Form
+				$data = array();
+				$data['titre'] = stripcslashes($form->getValue('titre'));
+				$data['id_theme'] = $form->getValue('id_theme');
+				$data['id_chroniqueur'] = $form->getValue('id_chroniqueur');
+				$where  = " id = $id ";
+			
+				$result = array_diff($data, $dataBDD);
+				if($result){
+					
+					if($chroniques->update($data, $where)) {
+						
+						echo $this->_redirect('admin/chroniques/i/12');
+						
+					}
+				}else{
+					
+					echo $this->_redirect('admin/chroniques');
+					
+				}
+	
+			}
+			
+		//traitement form->bdd page	
+		}elseif( $this->_request->isPost() && $this->_request->getPost('texte') ){
+	
+			$form = new Application_Form_AdminPage(0);
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				
+				$id = $form->getValue('id');
+				$pages = new Application_Model_DbTable_Chroniquespages();
+				$ch = $pages->fetchRow ( array ("id = ?" => $id ) );
+				
+				// Données DB
+				$dataBDD = array();
+				$dataBDD['id_chronique'] = $ch->id_chronique;
+				$dataBDD['texte'] = $ch->texte;
+				
+				// Données Form
+				$data = array();
+				$data['id_chronique'] = $form->getValue('id_chronique');
+				$data['texte'] = $form->getValue('texte');
+				$data['img'] = ( $form->getValue('img') ? "1" : "0" );
+				$where  = " id = $id ";
+			
+				$result = array_diff($data, $dataBDD);
+				if($result){
+					
+					if($pages->update($data, $where)) {
+						
+						echo $this->_redirect('admin/chroniques/i/22');
+						
+					}
+					
+				}else{
+					
+					echo $this->_redirect('admin/chroniques');
+					
+				}
+	
+			}
+			
+		//traitement form->bdd theme	
+		}elseif( $this->_request->isPost() && $this->_request->getPost('libele') ){
+	
+			$form = new Application_Form_AdminTheme(0);
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				
+				$id = $form->getValue('id');
+				$themes = new Application_Model_DbTable_Themes();
+				$th = $themes->fetchRow ( array ("id = ?" => $id ) );
+				
+				// Données DB
+				$dataBDD = array();
+				$dataBDD['libele'] = $th->libele;
+				
+				// Données Form
+				$data = array();
+				$data['libele'] = $form->getValue('libele');
+				$where  = " id = $id ";
+			
+				$result = array_diff($data, $dataBDD);
+				if($result){
+					
+					if($themes->update($data, $where)) {
+						
+						echo $this->_redirect('admin/chroniques/i/32');
+						
+					}
+					
+				}else{
+					
+					echo $this->_redirect('admin/chroniques');
+					
+				}
+	
+			}
+			
+		//traitement form->bdd chroniqueur	
+		}elseif( $this->_request->isPost() && $this->_request->getPost('tel') ){
+	
+			$form = new Application_Form_User();
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				
+				$id = $form->getValue('id');
+				$chroniqueur = new Application_Model_DbTable_Users();
+				$ch = $chroniqueur->fetchRow ( array ("id = ?" => $id ) );
+				
+				// Données DB
+				$dataBDD = array();
+				$dataBDD['prenom'] = $ch->prenom;
+				$dataBDD['nom'] = $ch->nom;
+				$dataBDD['jour'] = $ch->jour;
+				$dataBDD['mois'] = $ch->mois;
+				$dataBDD['annee'] = $ch->annee;
+				$dataBDD['sexe'] = $ch->sexe;
+				$dataBDD['pseudo'] = $ch->pseudo;
+				$dataBDD['email'] = $ch->email;
+				$dataBDD['mdp'] = $ch->mdp;
+				$dataBDD['tel'] = $ch->tel;
+				
+				// Données Form
+				$data = array();
+				$data['prenom'] = $form->getValue('prenom');
+				$data['nom'] = $form->getValue('nom');
+				$data['jour'] = $form->getValue('jour');
+				$data['mois'] = $form->getValue('mois');
+				$data['annee'] = $form->getValue('annee');
+				$data['sexe'] = $form->getValue('sexe');
+				$data['pseudo'] = $form->getValue('pseudo');
+				$data['email'] = $form->getValue('email');
+				$data['mdp'] = $form->getValue('mdp');
+				$data['tel'] = $form->getValue('tel');
+				$where  = " id = $id ";
+			
+				$result = array_diff($data, $dataBDD);
+				if($result){
+					
+					if($chroniqueur->update($data, $where)) {
+						
+						echo $this->_redirect('admin/utilisateurs/i/12');
+						
+					}
+					
+				}else{
+					
+					echo $this->_redirect('admin/utilisateurs');
+					
+				}
+	
+			}
+			
+		//traitement form->bdd lecteur	
+		}elseif( $this->_request->isPost() && $this->_request->getPost('sexe') ){
+	
+			$form = new Application_Form_Lecteur();
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				
+				$id = $form->getValue('id');
+				$lecteur = new Application_Model_DbTable_Users();
+				$ch = $lecteur->fetchRow ( array ("id = ?" => $id ) );
+				
+				// Données DB
+				$dataBDD = array();
+				$dataBDD['prenom'] = $ch->prenom;
+				$dataBDD['nom'] = $ch->nom;
+				$dataBDD['jour'] = $ch->jour;
+				$dataBDD['mois'] = $ch->mois;
+				$dataBDD['annee'] = $ch->annee;
+				$dataBDD['pseudo'] = $ch->pseudo;
+				$dataBDD['email'] = $ch->email;
+				$dataBDD['mdp'] = $ch->mdp;
+				$dataBDD['sexe'] = $ch->sexe;
+				$dataBDD['tel'] = $ch->tel;
+				
+				// Données Form
+				$data = array();
+				$data['prenom'] = $form->getValue('prenom');
+				$data['nom'] = $form->getValue('nom');
+				$data['jour'] = $form->getValue('jour');
+				$data['mois'] = $form->getValue('mois');
+				$data['annee'] = $form->getValue('annee');
+				$data['pseudo'] = $form->getValue('pseudo');
+				$data['email'] = $form->getValue('email');
+				$data['mdp'] = $form->getValue('mdp');
+				$data['sexe'] = $form->getValue('sexe');
+				$data['tel'] = $form->getValue('tel');
+				$where  = " id = $id ";
+			
+				$result = array_diff($data, $dataBDD);
+				if($result){
+					
+					if($lecteur->update($data, $where)) {
+						
+						echo $this->_redirect('admin/utilisateurs/i/22');
+						
+					}
+					
+				}else{
+					
+					echo $this->_redirect('admin/utilisateurs');
+					
+				}
+	
+			}
+			
+		}else echo 'ECHEC !';
+	}
+	
+	function delAction() {
+		
+		//del chronique
+		if($this->_getParam('cat') == "supp-ch"){
+			
+			$id = $this->_getParam('id');
+			$chroniques = new Application_Model_DbTable_Chroniques();
+			$chronique = $chroniques->fetchRow( array ("id = ?" => $id) );
+			if( $chronique->delete() ){
+				
+				echo '<script type="text/javascript">
+	 					$(function() {
+						   $( "#ChDl" ).dialog({
+						      resizable: false,
+						      width: 270,
+						      height:170,
+						      modal: true,
+						      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+						   });
+						   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+						});
+					 </script>
+					';
+				
+			}
+			
+		//del page
+		}elseif($this->_getParam('cat') == "supp-pg"){
+			
+			$id = $this->_getParam('id');
+			$chroniquespages = new Application_Model_DbTable_Chroniquespages();
+			$page = $chroniquespages->fetchRow( array ("id = ?" => $id) );
+			if( $page->delete() ){
+
+				echo '<script type="text/javascript">
+	 					$(function() {
+						   $( "#PgDl" ).dialog({
+						      resizable: false,
+						      width: 270,
+						      height:170,
+						      modal: true,
+						      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+						   });
+						   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+						});
+					 </script>
+					';
+				
+			}
+			
+		//del theme
+		}elseif($this->_getParam('cat') == "supp-th"){
+			
+			$id = $this->_getParam('id');
+			$themes = new Application_Model_DbTable_Themes();
+			$theme = $themes->fetchRow( array ("id = ?" => $id) );
+			if( $theme->delete() ){
+				
+				echo '<script type="text/javascript">
+	 					$(function() {
+						   $( "#ThDl" ).dialog({
+						      resizable: false,
+						      width: 270,
+						      height:170,
+						      modal: true,
+						      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+						   });
+						   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+						});
+					 </script>
+					';
+				
+			}
+			
+		//del comm
+		}elseif($this->_getParam('cat') == "supp-cm"){
+			
+			$id = $this->_getParam('id');
+			$comms = new Application_Model_DbTable_Commentaires();
+			$comm = $comms->fetchRow( array ("id = ?" => $id) );
+			if( $comm->delete() ){
+				
+				echo '<script type="text/javascript">
+	 					$(function() {
+						   $( "#CoDl" ).dialog({
+						      resizable: false,
+						      width: 270,
+						      height:170,
+						      modal: true,
+						      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/commentaires"); } }
+						   });
+						   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+						});
+					 </script>
+					';
+				
+			}
+			
+		//del usr
+		}elseif($this->_getParam('cat') == "supp-us"){
+			
+			$id = $this->_getParam('id');
+			$users = new Application_Model_DbTable_Users();
+			$user = $users->fetchRow( array ("id = ?" => $id) );
+			if( $user->delete() ){
+				
+				echo '<script type="text/javascript">
+	 					$(function() {
+						   $( "#UsDl" ).dialog({
+						      resizable: false,
+						      width: 270,
+						      height:170,
+						      modal: true,
+						      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/utilisateurs"); } }
+						   });
+						   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+						});
+					 </script>
+					';
+				
+			}
+			
+		}				
+	}
+	
+	function searchAction() {
+		
+		$rechchr = new Application_Form_AdminRecherche('chronique');
+		$this->view->formc = $rechchr;
+		$rechthem = new Application_Form_AdminRecherche('theme');
+		$this->view->formt = $rechthem;
+		$rechkhr = new Application_Form_AdminRecherche('chroniqueur');
+		$this->view->formk = $rechkhr;
+		$rechlec = new Application_Form_AdminRecherche('lecteur');
+		$this->view->forml = $rechlec;
+		
+		if( $this->_request->isPost() && $this->_request->getPost('search') ){
+	
+			$current = "0"; //$this->_getParam('cur');
+			$form = new Application_Form_AdminRecherche(0);
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				
+				if($form->getValue('id') == 'chronique'){
+					
+					$chroniques = new Application_Model_DbTable_Chroniques();
+					$select = $chroniques->select();
+					$select->setIntegrityCheck(false)
+							->from(array('c'=>'chroniques'), array('c.id as num','c.titre as titre','c.date_publication as date','c.note as note','c.signal_abus as abus','c.nb_vue as visites','c.valid as valid'))
+							->where('c.titre LIKE ? ', $form->getValue('search'))
+							->joinLeft(array('t'=>'themes'), 'c.id_theme = t.id', array('t.libele as theme'))
+							->joinLeft(array('k'=>'users'), 'c.id_chroniqueur = k.id', array('k.pseudo as chroniqueur'))
+							->joinLeft(array('q'=>'commentaires'), 'c.id = q.id_chronique', array('COUNT(DISTINCT q.id) as commentaires'))
+							->joinLeft(array('p'=>'chroniques_pages'), 'c.id = p.id_chronique', array('COUNT(DISTINCT p.id) as pages'))
+							->limitPage($current, '12')
+							->order('c.id DESC')
+							->group(array('c.id','p.id_chronique','q.id_chronique'));  
+					if($chroniques = $chroniques->fetchAll($select)){
+						
+						$this->view->search = $chroniques;
+						$this->view->type = $form->getValue('id');
+						
+					}else{
+						
+						echo '<script type="text/javascript">
+			 					$(function() {
+								   $( "#EcRc" ).dialog({
+								      resizable: false,
+								      width: 270,
+								      height:170,
+								      modal: true,
+								      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/chroniques"); } }
+								   });
+								   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+								});
+							 </script>
+							';
+					}
+					
+					
+								
+				}elseif ($form->getValue('id') == 'theme'){
+					
+					
+				}elseif ($form->getValue('id') == 'chroniqueur'){
+					
+					
+				}elseif ($form->getValue('id') == 'lecteur'){
+					
+					
+				}
+				
+			}
+		}elseif ($idk = $this->_getParam('idk')){
+			
+			//liste chroniques
+			$current_chron = '0';
+			$chroniques = new Application_Model_DbTable_Chroniques();
+			$select = $chroniques->select();
+			$select->setIntegrityCheck(false)
+					->from(array('c'=>'chroniques'), array('c.id as num','c.titre as titre','c.date_publication as date','c.note as note','c.signal_abus as abus','c.nb_vue as visites','c.valid as valid'))
+					->where('c.id_chroniqueur = ?',$idk)
+					->joinLeft(array('t'=>'themes'), 'c.id_theme = t.id', array('t.libele as theme'))
+					->joinLeft(array('k'=>'users'), 'c.id_chroniqueur = k.id', array('k.pseudo as chroniqueur'))
+					->joinLeft(array('q'=>'commentaires'), 'c.id = q.id_chronique', array('COUNT(DISTINCT q.id) as commentaires'))
+					->joinLeft(array('p'=>'chroniques_pages'), 'c.id = p.id_chronique', array('COUNT(DISTINCT p.id) as pages'))
+					->limitPage($current_chron, '12')
+					->order('c.id DESC')
+					->group(array('c.id','p.id_chronique','q.id_chronique')); 
+			$chroniques = $chroniques->fetchAll($select);
+			$this->view->search = $chroniques;
+			$this->view->type = 'chronique';
+			//pagination chroniques
+			$chroniques_count = new Application_Model_DbTable_Chroniques();
+			$select = $chroniques_count->select();
+			$select->setIntegrityCheck(false)->from('chroniques');
+			$chroniques_count = $chroniques_count->select($select);
+			$this->view->chronique_pagination = $chroniques_count;
+			
+		}
+		
+		
+	}
+	
+	
+	
+	function utilisateursAction() {
+	
+		//liste chroniqueurs
+		$current_chron = '0';
+		$chroniqueurs = new Application_Model_DbTable_Users();
+		$select = $chroniqueurs->select();
+		$select->setIntegrityCheck(false)
+				->from('users')
+				->where('chroniqueur = 1')
+				->limitPage($current_chron, '12')
+				->order('id DESC');
+		$chroniqueurs = $chroniqueurs->fetchAll($select);
+		$this->view->chroniqueurs = $chroniqueurs;
+		//pagination chroniqueurs
+		$chroniqueurs_count = new Application_Model_DbTable_Users();
+		$select = $chroniqueurs_count->select();
+		$select->setIntegrityCheck(false)->from('users');
+		$chroniqueurs_count = $chroniqueurs_count->select($select);
+		$this->view->chroniqueurs_pagination = $chroniqueurs_count;
+	
+
+		//liste lecteurs
+		$current_lect = '0';
+		$lecteurs = new Application_Model_DbTable_Users();
+		$select = $lecteurs->select();
+		$select->setIntegrityCheck(false)
+				->from('users')
+				->where('chroniqueur != ?', '1')
+				->limitPage($current_lect, '12')
+				->order('id DESC');
+		$lecteurs = $lecteurs->fetchAll($select);
+		$this->view->lecteurs = $lecteurs;
+		//pagination lecteurs
+		$lecteurs_count = new Application_Model_DbTable_Users();
+		$select = $lecteurs_count->select();
+		$select->setIntegrityCheck(false)->from('users');
+		$lecteurs_count = $lecteurs_count->select($select);
+		$this->view->lecteurs_pagination = $lecteurs_count;
+
+		//liste administrateurs
+		$current_admin = '0';
+		$admin = new Application_Model_DbTable_Administrateurs();
+		$select = $admin->select();
+		$select->setIntegrityCheck(false)
+				->from('administrateurs')
+				->limitPage($current_admin, '12')
+				->order('id DESC');
+		$admin = $admin->fetchAll($select);
+		$this->view->admin = $admin;
+		//pagination administrateurs
+		$admin_count = new Application_Model_DbTable_Administrateurs();
+		$select = $admin_count->select();
+		$select->setIntegrityCheck(false)->from('administrateurs');
+		$admin_count = $admin_count->select($select);
+		$this->view->admin_pagination = $admin_count;
+		
+		
+		//envoi contact mail
+		$form = new Application_Form_Mail();
+		if ($this->_request->isPost() && $this->_request->isPost('objet')) {
+
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+				 
+				$email = $form->getValue('email');
+				$subject = $this->_getParam('objet');
+				$message = $this->_getParam('texte');
+				$validateur = new Zend_Validate_EmailAddress();
+				
+				if (!$validateur->isValid($email) && $email!="" ) {
+					
+					$this->view->message = '<div class="alert alert-error">L\' adresse mail n\'est pas valide</div>';
+					
+				}elseif($form->isValid($_POST)){
+					
+						/**  envoi de mail pour toi harold**/
+					if( filter_var($email, FILTER_VALIDATE_EMAIL) ){
+							
+							
+						$msg = "<html>
+									<head>
+										<meta http-equiv='Content-Type' content='text/html; charset='utf-8' />
+									</head>
+									
+									<body>
+											
+										<H2> Bonjour ! </H2>
+										
+										<H4> Un nouveau message vous a &eacute;t&eacute; transmis de <a href='http://www.chronique-time.fr' title='Chronique Time'>Chronique-Time.fr</a> ! </H4>
+										<br />
+										<br />
+											Objet : &nbsp;&nbsp; $subject
+										<br />
+										<br />
+											Message :
+										<br />
+										<br />
+											$message
+										<br />
+										<br />
+										<br />
+											 Cordialement, <br />
+											 L'&eacute;quipe de Chronique-Time.fr <br />
+										<br />
+										<br />
+											  &nbsp;&nbsp;&nbsp;<a href='http://www.baildy.fr' title='Baildy Group'><img src='http://www.baildy.fr/public/img/logo.png' alt='baildy group' width='255'></a>
+										<br />
+										<br />
+										
+									</body>
+								</html>
+						";
+						 
+						$auth = Zend_Auth::getInstance();	
+						$mail_usr = $auth->getIdentity()->email;	
+						$mail = new Zend_Mail();
+						$mail->setBodyText($msg);
+						$mail->setBodyHtml($msg);
+						$mail->setFrom($mail_usr, 'Administrateur');
+						$mail->addTo( $email, 'Internaute');
+						$mail->addBcc('contact@baildy.fr', 'Baildy Group');
+						$mail->setSubject($subject);
+						$mail->send();	
+						$form->reset();
+						echo '<script type="text/javascript">
+				 					$(function() {
+									   $( "#MlOk" ).dialog({
+									      resizable: false,
+									      width: 280,
+									      height:150,
+									      modal: true,
+									      buttons: { Ok : function() { $( this ).dialog( "close" ); } }
+									   });
+									   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+									});
+								 </script>
+								';
+						
+					}else{
+							
+						$this->view->message = "<div class='alert alert-error'>Erreur de mail, veuillez saisir une adresse mail valide.</div>";
+						
+					    // l'email est invalide ; afficher pourquoi
+					    foreach ($validateur->getMessages() as $message) {
+					        echo "$message\n";
+					    }
+				    
+					}
+					
+				}else{
+					
+					$this->view->message = '<div class="alert alert-error">Veuillez remplir tous les champs</div>';
+					if($form->getValue('email'))
+					$form->getElement('email')->setValue( $form->getValue('email'));
+					if($form->getValue('objet'))
+					$form->getElement('objet')->setValue( $form->getValue('objet'));
+					if($form->getValue('texte'))
+					$form->getElement('texte')->setValue( $form->getValue('texte'));
+					
+				} 
+				
+			}
+				
+		}
+		
+		
+		//les formulaires
+		$newChroniqueur = new Application_Form_User('','1');
+		$this->view->newChroniqueur = $newChroniqueur;
+		$newLecteur = new Application_Form_User('','0');
+		$this->view->newLecteur = $newLecteur;
+		$contact = new Application_Form_Mail();
+		$this->view->formMail = $contact;
+		$rechchr = new Application_Form_AdminRecherche('chroniqueur');
+		$this->view->formc = $rechchr;
+		$rechlec = new Application_Form_AdminRecherche('lecteur');
+		$this->view->forml = $rechlec;
+		
+		//Msg de confirmations
+		$conf = $this->_getParam('i');
+		
+		if( !empty($conf) && $conf == "1" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#ChOk" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:190,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/utilisateurs"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "12" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#ChMd" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:170,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/utilisateurs"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "2" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#LcOK" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:170,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/utilisateurs"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "22" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#LcMd" ).dialog({
+					      resizable: false,
+					      width: 270,
+					      height:170,
+					      modal: true,
+					      buttons: { Ok : function() { window.location.replace("'.$this->_request->getBaseUrl('').'/admin/utilisateurs"); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "00" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#Err00" ).dialog({
+					      resizable: false,
+					      width: 300,
+					      height:180,
+					      modal: true,
+					      buttons: { Ok : function() { $( this ).dialog( "close" ); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}elseif( !empty($conf) && $conf == "91" ) {
+			
+			echo '<script type="text/javascript">
+ 					$(function() {
+					   $( "#Err01" ).dialog({
+					      resizable: false,
+					      width: 300,
+					      height:150,
+					      modal: true,
+					      buttons: { Ok : function() { $( this ).dialog( "close" ); } }
+					   });
+					   $(".ui-dialog-buttons .ui-dialog-buttonpane button").attr("class","btn");
+					});
+				 </script>
+				';
+		}
+	}
+	
+	function newuserAction(){
+		
+		//ajout chroniqueur
+		$form = new Application_Form_User();
+		if ($this->_request->isPost()) {
+
+			$formData = $this->_request->getPost();
+			if( $form->isValid($formData)) {
+			
+				
+				if($form->getValue('type') == '1') {
+
+					
+					$chr = new Application_Model_DbTable_Users();
+					$select = $chr->select();
+					$select->setIntegrityCheck(false)
+							->from('users')
+							->where('email = ?', stripcslashes($form->getValue('email')));	
+					$chr = $chr->fetchAll($select);
+									
+					if($chr){
+						
+						echo $this->_redirect('admin/utilisateurs/i/91');
+						
+					}else{
+						
+						$row = $chr->createRow();
+						$row->nom = $form->getValue('nom');
+						$row->prenom = $form->getValue('prenom');
+						$row->jour = $form->getValue('jour');
+						$row->mois = $form->getValue('mois');
+						$row->annee = $form->getValue('annee');
+						$row->sexe = $form->getValue('sexe');
+						$row->pseudo = stripcslashes($form->getValue('pseudo'));
+						$row->email = stripcslashes($form->getValue('email'));
+						$row->mdp = md5(stripcslashes($form->getValue('mdp')));
+						$row->tel = stripcslashes($form->getValue('tel'));
+						$row->valid = 1;
+						$row->chroniqueur = 1;
+						
+						if($row->save()){
+							
+							echo $this->_redirect('admin/utilisateurs/i/1');
+		
+						}
+					}
+					
+				}elseif($form->getValue('type') == '0') {
+
+				
+					$lec = new Application_Model_DbTable_Users();
+					
+					$row = $lec->createRow();
+					$row->nom = $form->getValue('nom');
+					$row->prenom = $form->getValue('prenom');
+					$row->jour = $form->getValue('jour');
+					$row->mois = $form->getValue('mois');
+					$row->annee = $form->getValue('annee');
+					$row->sexe = $form->getValue('sexe');
+					$row->pseudo = stripcslashes($form->getValue('pseudo'));
+					$row->email = stripcslashes($form->getValue('email'));
+					$row->mdp = md5(stripcslashes($form->getValue('mdp')));
+					$row->tel = stripcslashes($form->getValue('tel'));
+					$row->valid = 1;
+					$row->chroniqueur = '0';
+					
+					if($row->save()){
+						
+						echo $this->_redirect('admin/utilisateurs/i/2');
+	
+					}
+				}
+			}else echo $this->_redirect('admin/utilisateurs/i/00');
+		}
+		
+		
+	}
+	
+	
+	function commentairesAction(){
+		
+
+		//liste commentaires
+		$current = '0';
+		$commentaires = new Application_Model_DbTable_Commentaires();
+		$select = $commentaires->select();
+		$select->setIntegrityCheck(false)
+				->from(array('c'=>'commentaires'), array('c.id as id','c.id_user as user','c.id_chronique as id_k','c.id_page as page','c.commentaire as comm','c.pseudo as pseudo','c.email as email','c.date_publication as publication','c.signal_abus as abus','c.valid as valid'))
+				->joinLeft(array('k'=>'chroniques'), 'c.id_chronique = k.id', array('k.titre as chronique'))
+				->joinLeft(array('p'=>'chroniques_pages'), 'c.id_page = p.id', array('p.texte as texte'))
+				->limitPage($current, '12')
+				->order('c.id DESC'); 
+		$commentaires = $commentaires->fetchAll($select);
+		$this->view->commentaires = $commentaires;
+		//pagination chroniques
+		$comm_count = new Application_Model_DbTable_Commentaires();
+		$select = $comm_count->select();
+		$select->setIntegrityCheck(false)->from('commentaires');
+		$comm_count = $comm_count->select($select);
+		$this->view->comm_pagination = $comm_count;
+		
+	}
+	
+	
+	function preDispatch() {
+		
+		$auth = Zend_Auth::getInstance();
+		if(!isset($auth->getIdentity()->email)) {
+			
+			$this->_redirect('/auth');
+			
+		}elseif( !isset($auth->getIdentity()->email) ){
+			
+			$this->_redirect('/error/erreurpermission/');
+			
+		}
+		
+	}
+
+}

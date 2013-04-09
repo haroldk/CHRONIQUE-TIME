@@ -1,0 +1,55 @@
+<?php
+
+class Application_Form_AdminPage extends Zend_Form{
+	
+	public  function __construct($id) {
+
+		parent::__construct($id);
+		$this->setName('APage')->setAction('newpage');
+		
+		$idH = new Zend_Form_Element_Hidden('id');
+		$idH->setValue($id);
+		
+		$chronique = new Zend_Form_Element_Select('id_chronique');
+		$chronique->setLabel('Chronique : ')->addFilter('StripTags')->addFilter('StringTrim');
+			$ChrOpt = array();
+			$chroniques = new Application_Model_DbTable_Chroniques();
+			$select = $chroniques->select();
+			$select->setIntegrityCheck(false)->from('chroniques')->order('id DESC');
+			$chroniques = $chroniques->fetchAll($select); $ChrOpt[] = array('key'=> '0','value'=> 'Choisissez la chronique');
+			foreach ($chroniques as $c){	$ChrOpt[] = array('key'=> $c->id,'value'=> $c->titre); 	}
+		$chronique->addMultiOptions($ChrOpt);
+		
+		$text = new Zend_Form_Element_Textarea('texte',array('rows' => 12, 'cols' => 15));	
+		$text->setLabel('Texte : ')->addFilter('StripTags')->addFilter('StringTrim')->addValidator('NotEmpty');	
+					
+		$img = new Zend_Form_Element_File('img'); $img->setLabel('Photo : ')->addFilter('StripTags')->addFilter('StringTrim');
+				
+		$submit = new Zend_Form_Element_Submit('submit');
+		$submit->setAttrib('class','btn btn-primary')->setLabel('Ajouter');
+		
+		$this->addElements(array($idH, $chronique, $img, $text, $submit));
+		
+		
+		if( isset($id) && ($id != "" OR $id != "0") ) {
+					
+	        $obj = new Application_Model_DbTable_Chroniquespages();
+	        $obj = $obj->fetchRow ( array ("id = ?" => $id ) );
+        
+	  		if( $obj != null ) {
+		  		
+		    	$obj = $obj->toArray ();
+		    	$this->populate ( $obj );
+		  		$submit->setLabel( 'MODIFIER' )->setAttrib('class', 'btn btn-warning');	  	
+		  		$this->setAction('../../modif');
+	
+		  	}else {
+		  		
+		    	throw new Zend_Exception ( "Il n' éxiste pas d'élément n° : " . $id );
+		    	
+		  	}
+			  	
+		}
+			
+	}
+}

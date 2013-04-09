@@ -1,0 +1,175 @@
+body,h1,h2,h3,p,quote,small,form,input,ul,li,ol,label{
+	/* Page reset */
+	margin:0px;
+	padding:0px;
+}
+
+body{
+	/* Setting default text color, background and a font stack */
+	color:#444444;
+	font-size:13px;
+	background: #f2f2f2;
+	font-family:Arial, Helvetica, sans-serif;
+}
+
+/* Gallery styles */
+
+#gallery{
+	/* CSS3 Box Shadow 
+	-moz-box-shadow:0 0 3px #AAAAAA;
+	-webkit-box-shadow:0 0 3px #AAAAAA;
+	box-shadow:0 0 3px #AAAAAA;*/
+	
+	/* CSS3 Rounded Corners 
+	
+	-moz-border-radius-bottomleft:4px;
+	-webkit-border-bottom-left-radius:4px;
+	border-bottom-left-radius:4px;
+	
+	-moz-border-radius-bottomright:4px;
+	-webkit-border-bottom-right-radius:4px;
+	border-bottom-right-radius:4px;
+	
+	border:1px solid white;*/
+	
+	background: url('../img/index/fond_rose_chrojour.png') no-repeat ;
+	
+	/* The width of the gallery */
+	width:1024px;
+	overflow:hidden;
+}
+
+#slides{
+	/* This is the slide area */
+	height:300px;
+	
+	/* jQuery changes the width later on to the sum of the widths of all the slides. */
+	width:1024px;
+	overflow:hidden;
+	
+}
+
+.slide{
+	width: 1024px;
+	float:left;
+	position: relative;
+}
+
+#menu{
+	/* This is the container for the thumbnails */
+	height:60px;
+}
+
+#gallery ul{
+	margin:0px;
+	padding:0px;
+}
+
+#gallery li{
+	/* Every thumbnail is a li element */
+	width: 122px;
+	display:inline-block;
+	list-style:none;
+	height:72px;
+}
+
+#gallery li.inact:hover{
+	/* The inactive state, highlighted on mouse over */
+}
+
+#gallery li.act,#gallery li.act:hover{
+	/* The active state of the thumb */
+	/*background:url(../img/active_bg.png) no-repeat;*/
+}
+
+#gallery li.act a{
+	cursor:default;
+}
+
+.fbar{
+	/* The left-most vertical bar, next to the first thumbnail */
+	width:2px;
+}
+
+#gallery li a{
+	display:block;
+	height:35px;
+	padding-top:10px;
+	position: relative;
+}
+
+.ie #gallery a img{
+	border: 5px solid #9cb1c1;
+}
+#gallery a img{
+	border: 6px solid silver;
+	border-color: rgb(0, 0, 0);
+	border-color: rgba(224, 224, 226, 0.6);
+	position: absolute;
+	left: 0;
+}
+
+
+/* The styles below are only necessary for the demo page */
+
+#gallery h1{
+	font-family:"Myriad Pro",Arial,Helvetica,sans-serif;
+	font-size:36px;
+	font-weight:normal;
+	margin-bottom:15px;
+}
+
+#gallery h2{
+	font-family:"Myriad Pro",Arial,Helvetica,sans-serif;
+	font-size:12px;
+	font-weight:normal;
+	position:absolute;
+	right:0;
+	text-transform:uppercase;
+	top:15px;
+}
+
+#main{
+	/* The main container */
+	margin:0 auto;
+	text-align:center;
+	width: 100%;
+	position:relative;
+}
+
+
+#gallery p{
+	padding:10px;
+	text-align:center;
+}
+
+#gallery div#slides div.slide p.slide-title {
+	
+	width: 1024px;
+	color: white;
+	text-align: center;
+	font-style: italic;
+	font-size: 30px;
+	margin-top: 30px;
+}
+#gallery div#slides div.slide p.slide-article {
+	
+	width: 600px;
+	color: white;
+	font-weight: bold;
+	text-align: center;
+	font-size: 38px;
+	position: absolute;
+	text-align: left;
+	text-transform: uppercase;
+	left: 310px;
+	top: 110px;
+}
+#gallery div#slides div.slide img {
+	
+	display: block;
+	position: absolute;	
+	left: 100px;
+	top: 90px;
+	
+}

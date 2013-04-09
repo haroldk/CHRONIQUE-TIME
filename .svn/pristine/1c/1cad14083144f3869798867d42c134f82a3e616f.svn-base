@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html> 
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/jquery-1.8.2.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/jquery-ui-1.9.0.custom.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/html5shiv.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/css_browser_selector.js');?>"></script>
+	
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/markitup.css');  ?>"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/bootstrap.css');  ?>"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/jquery-ui-1.9.0.custom.css');  ?>"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/global.css');  ?>"/>
+	
+	<title>Chronique Time</title>
+</head>
+
+<body>
+
+	<noscript><h1>JavaScript est désactivé veuillez réactiver javascript svp!</h1></noscript> 
+	
+	<div id="container">
+		<?php
+			$controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+			$action = Zend_Controller_Front::getInstance()->getRequest()->getActionName();
+		?>
+		<header>
+			<div> 
+				<a href="<?php echo $this->baseUrl('index');?>" title="Chronique Time" >
+				<img alt="chronique time" src="<?php echo $this->baseUrl('img/layout/logo.png');?>" /> </a>
+				<img alt="chronique time" src="<?php echo $this->baseUrl('img/layout/slogan.png');?>" id="slogan-head"/> 
+			</div>
+		</header>	
+		
+		<nav>
+			<ul>
+				 <li style="margin:0;">	<a href="<?php echo $this->baseUrl('index');?>" title="Chronique Time accueil" <?php if($action == "index" && $controller == "index") echo 'style="color: #E00D27;"';?>>accueil</a> 		</li>
+				 <li>	<a href="<?php echo $this->baseUrl('index/top');    ?>" title="Classement Chroniques" <?php if($action == "top" && $controller == "index") echo 'style="color: #E00D27;"';?>>Top Chroniques</a> 			</li>
+				 <li>	<a href="<?php echo $this->baseUrl('index/themes'); ?>" title="Répertoriées par thème" <?php if($action == "themes" && $controller == "index") echo 'style="color: #E00D27;"';?>>chroniques par th&ecirc;mes</a>  </li>
+				 <li>	<a href="<?php echo $this->baseUrl('index/all');    ?>" title="Toutes les chroniques" <?php if($action == "all" && $controller == "index") echo 'style="color: #E00D27;"';?>>toutes les chroniques</a> 		</li>
+				 <li>	<a href="<?php echo $this->baseUrl('index/apropos');?>" title="À propos de ChroniqueTime" <?php if($action == "apropos" && $controller == "index") echo 'style="color: #E00D27;"';?>>&Agrave; propos de</a> 		</li>
+				 <li>	<a href="<?php echo $this->baseUrl('index/contact');?>" title="Contacter ChroniqueTime" <?php if($action == "contact" && $controller == "index") echo 'style="color: #E00D27;"';?>>contact</a> 				</li>
+				 <li style="float: right;">	<form><input type="text" placeholder="Recherche"/><input type="submit" /></form>		</li>
+			</ul>
+		</nav>
+		
+		<!-- <wrapper> -->
+		
+			<?php  echo $this->layout()->content; ?>
+			
+		<!-- </wrapper> -->
+		
+		<footer>
+			<div>
+			
+				<div>
+					<h4>chronique time</h4>
+					<ul>
+						<li><a href="" alt="">Top chronique</a></li>
+						<li><a href="" alt="">Chronique par th&ecirc;me</a></li>
+						<li><a href="" alt="">Toutes chronique</a></li>
+						<li><a href="" alt="">Contact</a></li>
+					</ul>
+				</div>
+				<div>
+					<h4>mentions</h4>
+					<ul>
+						<li><a href="" alt="">CGU</a></li>
+						<li><a href="" alt="">Mentions l&eacute;gales</a></li>
+					</ul>
+				</div>
+				<div>
+					<h4>newsletters</h4>
+					<form><input type="text" placeholder="Entrez votre mail"/><input type="submit" value="VALIDER"/></form>
+				</div>
+				<div class="reso-soc">
+					<p class="social-logo">
+						<img alt="chronique time" src="<?php echo $this->baseUrl('img/layout/suiveznous.png');?>"><br/>
+						<a href="" title=""><img alt="facebook chronique time" src="<?php echo $this->baseUrl('img/layout/logo_fb.jpg');?>" width="40" class="icn_soc"/></a> 
+						<a href="" title=""><img alt="twitter chronique time" src="<?php echo $this->baseUrl('img/layout/logo_twitter.jpg');?>" width="40" class="icn_soc"/></a> 
+						&nbsp;
+					</p>
+					<p> <img class="twitter_bird" alt="tweet chronique time" src="<?php echo $this->baseUrl('img/layout/twitter_bird.png');?>" /> <span class="tweettime">tweetime : #chroniquetime</span><span><font style="color: #5bc7f5;">"</font>Chronique &agrave; lire ....<font style="color: #5bc7f5;">"</font></span> </p>
+				</div><!-- end reso-soc -->
+				<p class="txt-footer2">ChroniqueTime 2013 - Tous droits r&eacute;serv&eacute;s - R&eacute;alisation &nbsp;<a href="http://baildy.fr/" title="baildy group"><img alt="Baildy group" src="<?php echo $this->BaseUrl('img/layout/logo_baildy_footer_2.png'); ?>" /></a> </p>
+			</div>
+		</footer>
+		
+	</div>
+
+
+</body>
+</html>
+
+
+
+
+
+

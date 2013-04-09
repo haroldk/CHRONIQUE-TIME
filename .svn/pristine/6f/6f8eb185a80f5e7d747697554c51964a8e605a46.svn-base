@@ -1,0 +1,414 @@
+<br/>
+<script type="text/javascript">
+<!-- 
+
+	//Navigation par onglet
+	$('#myTab a').click(function(e) {
+	  e.preventDefault();
+	  $(this).tab('show');
+	});
+	$('#myTab a[href="#pages"]').tab('show'); // Select tab by name
+	$('#myTab a:first').tab('show'); // Select first tab
+	$('#myTab a:last').tab('show'); // Select last tab
+	$('#myTab li:eq(2) a').tab('show'); // Select third tab (0-indexed)
+
+	//Details chroniques   
+	$(".element").live('click',function(){
+
+		var theme = $('.ch-theme',this).html();
+		var visites = $('.ch-visites',this).html();
+		var pages = $('.ch-pages',this).html();
+		var commentaires = $('.ch-commentaires',this).html();
+		var note = $('.ch-note',this).html();
+		var abus = $('.ch-abus',this).html();
+
+		$(this).popover({
+
+			animation : true,
+			placement : 'top',
+			trigger   : 'click',
+			html	  : true,
+			title	  : 'Info Chronique :',
+			content : '<strong>Thème</strong> : '+theme+' <br/><strong>Visites</strong> : '+visites+' <br/><strong>Pages</strong> : '+pages+'<br/> <strong>Commentaires</strong> : '+commentaires+' <br/><strong>Note</strong> : '+note+'étoiles <br/> <strong>Abus</strong> : '+abus+'',
+			delay : { show: 500, hide: 100 }
+		 
+		});
+		$(this).popover('show');
+		
+	});
+
+	
+	//Iframe aperçu
+	$(".iframe").live('click',function() {
+
+	   $( "#iframe" ).dialog({
+	      resizable: false,
+	      width: 1000,
+	      height:850,
+	      modal: true,
+	      buttons: {  Annuler: function() { $( this ).dialog( "close" ); }  }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+
+	
+	//Dialog Formulaires d'ajout
+	$("#newCh").live('click',function() {
+
+	   $( "#NwCh" ).dialog({
+	      resizable: false,
+	      width: 500,
+	      height:350,
+	      modal: true,
+	      buttons: {  Annuler: function() { $( this ).dialog( "close" ); }  }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+	$("#newPg").live('click',function() {
+
+	   $( "#NwPg" ).dialog({
+	      resizable: false,
+	      width: 700,
+	      height:670,
+	      modal: true,
+	      buttons: {  Annuler: function() { $( this ).dialog( "close" ); }  }
+	   });
+	   $("textarea#texte").markItUp(mySettings);
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+	$("#newTh").live('click',function() {
+
+	   $( "#NwTh" ).dialog({
+	      resizable: false,
+	      width: 360,
+	      height:250,
+	      modal: true,
+	      buttons: {  Annuler: function() { $( this ).dialog( "close" ); }  }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+
+	//Msg de confirmation de suppression
+	$(".suppr").live('click',function() {
+
+	   var clas = $(this).attr('class').split(' ');
+	   var info = $(this).attr('title').split('&&');
+	   var type = clas['0'];
+	   var name = info['0'];
+	   var id = info['1'];
+	   var x = type+'/id/'+id;
+
+	   $('#ThDl .supp-txt').html('"'+name+'"');
+	   $( "#ThDl" ).dialog({
+	      resizable: false,
+	      width: 360,
+	      height:200,
+	      modal: true,
+	      buttons: {  
+		      Supprimer: function() { window.location.replace("<?php echo $this->baseUrl('admin/del/cat/');?>"+x);  } ,
+		      Annuler: function() { $( this ).dialog( "close" ); } 
+	      }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+	
+	//Msg de confirmation de diffusion
+	$(".diff-ch").live('click',function() {
+
+	   var clas = $(this).attr('class').split(' ');
+	   var info = $(this).attr('title').split('&&');
+	   var valid = info['0'];
+	   var name = info['1'];
+	   var id = info['2'];
+	   var x = 'ch/id/'+id+'/vl/'+valid;
+
+	   $('#PgDf .diff-txt').html('"'+name+'"');
+	   $( "#PgDf" ).dialog({
+	      resizable: false,
+	      width: 360,
+	      height:200,
+	      modal: true,
+	      buttons: {  
+		      Permuter: function() { window.location.replace("<?php echo $this->baseUrl('admin/diff/cat/');?>"+x);  } , 
+		      Annuler: function() { $( this ).dialog( "close" ); }  
+	      }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+
+	
+	//Form de recherche
+	$("#Rchc").live('click',function() {
+
+	   $( "#ChRc" ).dialog({
+	      resizable: false,
+	      width: 360,
+	      height:270,
+	      modal: true,
+	      buttons: {  
+		      Annuler: function() { $( this ).dialog( "close" ); }  
+	      }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+	$("#Rcht").live('click',function() {
+
+	   $( "#ThRc" ).dialog({
+	      resizable: false,
+	      width: 360,
+	      height:270,
+	      modal: true,
+	      buttons: {  
+		      Annuler: function() { $( this ).dialog( "close" ); }  
+	      }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+
+	
+	
+
+// --> 
+</script>
+
+<?php 
+
+	$this->baseUrl('');
+
+		
+?>
+<div id="wrapper">
+  	<div class="bs-docs-example">
+            <ul id="myTab" class="nav nav-tabs">
+              <li class="active"><a href="#chroniques" data-toggle="tab">Chroniques</a></li>
+              <li><a href="#pages" data-toggle="tab">Pages</a></li>
+              <li><a href="#themes" data-toggle="tab">Thèmes</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Recherches &nbsp; <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#dropdown1" data-toggle="tab" id="Rchc">&nbsp;<i class="icon-search"></i> &nbsp;&nbsp;Chroniques</a></li>
+                  <li><a href="#dropdown2" data-toggle="tab" id="Rcht">&nbsp;<i class="icon-search"></i> &nbsp;&nbsp;Thèmes</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Ajouter &nbsp; <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#dropdown1" data-toggle="tab" id="newCh"><i class="icon-book"></i> &nbsp;Chronique</a></li>
+                  <li><a href="#dropdown2" data-toggle="tab" id="newPg"><i class="icon-file"></i> &nbsp;Page</a></li>
+                  <li><a href="#dropdown2" data-toggle="tab" id="newTh"><i class="icon-tags"></i> &nbsp;Thème</a></li>
+                </ul>
+              </li>
+            </ul>
+            
+            <div id="myTabContent" class="tab-content">
+            
+              <!-- ONGLET CHRONIQUES -->
+              <div class="tab-pane fade in active" id="chroniques">&nbsp;
+              	<table class="table table-striped">
+              		<caption><i>Les chroniques de ChroniqueTime</i></caption>
+              		<tr>
+              			<th>N°</th>
+              			<th>Titre</th>
+              			<th>Chroniqueur</th>
+              			<th>Création le</th>
+              			<th>Détails</th>
+              			<th>Diffusion</th>
+              			<th>Actions</th>
+              		</tr>
+              		<?php 
+              			foreach ($this->chroniques as $c) {
+				
+							echo'<tr>
+		  							<td>'.$c->num.'</td>
+		  							<td>'.$c->titre.'</td>
+		  							<td>'.$c->chroniqueur.'</td>
+		  							<td>'.$c->date.'</td>
+		  							<td class="element purple pointer">+ de détails...<span class="none ch-pages">'.$c->pages.'</span><span class="none ch-commentaires">'.$c->commentaires.'</span><span class="none ch-theme">'.$c->theme.'</span><span class="none ch-note">'.$c->note.'</span><span class="none ch-abus">'.$c->abus.'</span><span class="none ch-visites">'.$c->visites.'</span></td>
+		  							<td>'.($c->valid == 1 ? "<span class='label label-success'>&nbsp;En-Ligne&nbsp;</span>" : "<span class='label label-important'>&nbsp;Hors-Ligne&nbsp;</span>").'</td>
+		  							<td>
+										<div class="btn-group">
+										  <a class="btn btn-primary" data-toggle="dropdown" href="#"><i class="icon-wrench icon-white"></i> Action</a>
+										  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+										  <ul class="dropdown-menu">
+										    <li><a href="'.$this->baseUrl('admin/edit/idc/'.$c->num).'" class="ch-modif" id="'.$c->num.'_id" title="'.$c->titre.'"><i class="icon-edit"></i> &nbsp;Modifier</a></li>
+										    <li><a href="#" class="supp-ch suppr" title="'.$c->titre.'&&'.$c->num.'"><i class="icon-trash"></i> &nbsp;Effacer</a></li>
+										    <li><a href="#" class="diff-ch" title="'.$c->valid.'&&'.$c->titre.'&&'.$c->num.'"><i class="icon-ban-circle"></i> &nbsp;Diffusion</a></li>
+										    <li class="divider"></li>
+										    <li><a href="#" class="iframe"><i class="i icon-eye-open"></i> &nbsp;Visualiser</a></li>
+										  </ul>
+										</div>
+									</td>
+								</tr>
+	  						';
+						}
+              		?>
+              	</table>
+              </div>
+              
+              <!-- ONGLET PAGES -->
+              <div class="tab-pane fade" id="pages">&nbsp;
+              	<table class="table table-striped" width="1022">
+              		<caption><i>Les Chroniques par Pages</i></caption>
+              		<tr>
+              			<th>Chronique</th>
+              			<th>Page</th>
+              			<th>Chroniqueur</th>
+              			<th>Commentaires</th>
+              			<th>Détails</th>
+              			<th>Actions</th>
+              		</tr>
+              		<?php 
+              			foreach ($this->pages as $p) {
+								// $p->page2 => $p->commentaires
+							echo'<tr>
+		  							<td>'.$p->titre.'</td>
+		  							<td>'.$p->page.'</td>
+		  							<td>'.$p->chroniqueur.'</td>
+		  							<td>'.$p->page.'</td>
+		  							<td class="element">plus de détails..</td>
+		  							<td>
+										<div class="btn-group">
+										  <a class="btn btn-primary" data-toggle="dropdown" href="#"><i class="icon-wrench icon-white"></i> Action</a>
+										  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+										  <ul class="dropdown-menu">
+										    <li><a href="'.$this->baseUrl('admin/edit/idp/'.$p->page).'"><i class="icon-pencil"></i>  &nbsp;Editer</a></li>
+										    <li><a href="#" class="supp-pg suppr" title="'.$p->titre.$p->page.'&&'.$p->page.'"><i class="icon-trash"></i> &nbsp;Effacer</a></li>
+										    <li class="divider"></li>
+										    <li><a href="#"><i class="i icon-eye-open"></i>  &nbsp;Chronique</a></li>
+										  </ul>
+										</div>
+									</td>
+								</tr>
+	  						';
+
+						}
+              		?>
+              	</table>
+              </div>
+              
+              <!-- ONGLET THEMES -->
+              <div class="tab-pane fade" id="themes">&nbsp;
+              	<table class="table table-striped" style="width:450px;margin:0 auto;">
+              		<caption><i>Tous les thèmes de nos Chroniques</i></caption>
+              		<tr>
+              			<th style="width:30px;">N°</th>
+              			<th style="width:270px;text-align:center;">Thème</th>
+              			<th>Actions</th>
+              		</tr>
+              		<?php 
+              			foreach ($this->themes as $t) {
+				
+							echo'<tr>
+		  							<td>'.$t->id.'</td>
+		  							<td style="text-align:center;">'.$t->libele.'</td>
+		  							<td>
+										<div class="btn-group">
+										  <a class="btn btn-primary" data-toggle="dropdown" href="#"><i class="icon-wrench icon-white"></i> Action</a>
+										  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+										  <ul class="dropdown-menu">
+										    <li><a href="'.$this->baseUrl('admin/edit/idt/'.$t->id).'"><i class="icon-pencil"></i>  &nbsp;Editer</a></li>
+										    <li><a href="#" class="supp-th suppr" title="'.$t->libele.'&&'.$t->id.'"><i class="icon-trash"></i>  &nbsp;Effacer</a></li>
+										    <li class="divider"></li>
+										    <li><a href="#"><i class="i icon-briefcase"></i> Chroniques</a></li>
+										  </ul>
+										</div>
+									</td>
+								</tr>
+	  						';
+						}
+              		?>
+              	</table>
+              	<br />
+              </div>
+
+            </div>
+              <br/>
+            
+  	</div>
+      
+     &nbsp;  
+     
+     <!-- ------------------------ -->
+     <!--  IFRAME AFFICHAGE SITE  -->
+	     <div class="none" id="iframe" title="Aperçu Chronique : "><br/>
+	     	<iframe name="SiteWeb" SRC="http://localhost:8888/CHRONIQUE-TIME/public/index/chronique" scrolling="yes" height="850" width="1024" FRAMEBORDER="no"></iframe>
+	     </div>
+     <!-- ------------------------ -->
+     <!-- FORMULAIRE NEW CHRONIQUE -->
+	     <div class="none" id="NwCh" title="Nouvelle Chronique : "><br/>
+	     	<?php echo $this->newChronique; $this->newChronique->setAction('admin/newchronique'); ?>
+	     </div>
+     <!-- ------------------------ -->
+     <!-- FORMULAIRE NEW PAGE ---- -->
+	     <div class="none" id="NwPg" title="Nouvelle Page : "><br/>
+	     	<?php echo $this->newPage; ?>
+	     </div>
+     <!-- ------------------------ -->
+     <!-- FORMULAIRE NEW THEME --- -->
+	     <div class="none" id="NwTh" title="Nouveau Thème : "><br/>
+	     	<?php echo $this->newTheme; ?>
+	     </div>
+     <!-- ------------------------ -->
+     <!-- AJOUT -OK- NEW CHRONIQUE -->
+	     <div class="none" id="ChOk" title="Ajout réussi "><br/>
+	     	<p style="margin:0; text-align:center;">Une nouvelle chronique viens d'être créée avec succès !</p>
+	     </div>
+     <!-- ------------------------ -->
+     <!-- MODIF -OK- CHRONIQUE --- -->
+     <div class="none" id="ChMd" title="Modification réussie "><br/>
+     	<p style="margin:0; text-align:center;">La modification de la chronique a bien été éffectuée !</p>
+     </div>
+     <!-- ------------------------ -->
+     <!-- AJOUT -OK- NEW PAGE ---- -->
+	     <div class="none" id="PgOk" title="Ajout réussi "><br/>
+	     	<p style="margin:0; text-align:center;">Une nouvelle page vient d'être ajoutée avec succès !</p>
+	     </div>
+     <!-- ------------------------ -->  
+     <!--  MODIF  -OK- PAGE  ----- -->
+     <div class="none" id="PgMd" title="Modification réussie "><br/>
+     	<p style="margin:0; text-align:center;">La modification de la page a bien été éffectuée !</p>
+     </div>
+     <!-- ------------------------ -->
+     <!-- AJOUT -OK- NEW THEME --- -->
+	     <div class="none" id="ThOk" title="Ajout réussi "><br/>
+	     	<p style="margin:0; text-align:center;">Un nouveau thème vient d'être inscrit à la liste !</p>
+	     </div>
+     <!-- ------------------------ -->
+     <!-- MODIF -OK- THEME --- -->
+     <div class="none" id="ThMd" title="Modification réussie "><br/>
+     	<p style="margin:0; text-align:center;">La modification du thème a bien été éffectuée !</p>
+     </div>
+     <!-- ------------------------ -->
+     <!-- SUPPRIMER ---- ALL ----- -->
+     <div class="none" id="ThDl" title="Suppression "><br/>
+     	<p style="margin:0; text-align:center;">Êtes vous sûre de vouloir supprimer <br /> <span class="supp-txt"></span> <br /> ?</p>
+     </div>
+     <!-- ------------------------ -->
+     
+     <!-- DIFFUSION --- PAGE ----- -->
+     <div class="none" id="PgDf" title="Diffusion "><br/>
+     	<p style="margin:0; text-align:center;">Souhaitez vous changer la diffusion de l'article <br /> <span class="diff-txt"></span> <br /> ?</p>
+     </div>
+     <!-- ------------------------ -->
+     
+      <!-- RECHERCHE CHRONIK ----- -->
+     <div class="none" id="ChRc" title="Recherche Chronique "><br/>
+     	<p style="margin:0; text-align:center;"><?php echo $this->formc; ?></p>
+     </div>
+     <!-- ------------------------ -->
+     
+      <!-- RECHERCHE THEME ------- -->
+     <div class="none" id="ThRc" title="Recherche Thème "><br/>
+     	<p style="margin:0; text-align:center;"><?php echo $this->formt; ?></p>
+     </div>
+     <!-- ------------------------ -->
+     
+</div>

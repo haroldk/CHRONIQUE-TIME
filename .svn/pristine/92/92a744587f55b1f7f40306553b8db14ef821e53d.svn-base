@@ -1,0 +1,108 @@
+<script>
+  $(function() {
+	  $( "#commenter" ).live('click',function(){
+	    $( "#dialog-comm" ).dialog({
+		    
+	      height: 500,
+	      width: 500,
+	      show: "fade",
+	      option: "hide",
+	      hide: "drop",
+	      modal: true
+	      
+	    });
+      });
+	  $( "#btn-connexion" ).live('click',function(){
+	    $( "#dialog-connexion" ).dialog({
+	      height: 280,
+	      width: 300,
+	      show: "fade",
+	      option: "hide",
+	      hide: "explode",
+	      modal: true
+	    });
+      });
+  });
+</script>
+<div id="top-chronique">
+	<div>
+		<div id="top-img"><img alt="chronique time" src="<?php echo $this->baseUrl('images/chroniques/img_chronique.jpg');?>" /> </div>
+		<div id="top-right">
+			<H3 class="top-title">Chronique d'une fille de 14 ans qui tombe enceinte</H3>
+			<p>Publié par &nbsp;<span class="black italic bold">J-Batiste18</span></p>
+			<p>Thème :&nbsp;<span class="black italic bold">Amour</span></p>
+			<p><img alt="chronique time" src="<?php echo $this->baseUrl('img/general/icon_commentaire.png');?>" /> &nbsp;<span class="black italic bold" style="margin-left: 35px;">12 commentaires</span></p>
+			<br/>
+			<iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2FCHRONIQUE-TIME.fr%2Fpublic%2Findex%2Fchronique&amp;send=false&amp;layout=standard&amp;width=200&amp;show_faces=false&amp;font&amp;colorscheme=light&amp;action=like&amp;height=35&amp;appId=151983048230591" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:auto; max-width:250px; height:35px;" allowTransparency="true"></iframe>
+		</div>
+	</div>
+</div><!-- end top-chro-->
+
+
+<div id="wrapper">
+	<div>
+		<div id="chronique-txt">
+			
+			<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+			<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
+			<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+			<p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.</p>
+		
+			<div id="txt-paginnation">PAGINNATION</div>
+		</div><!-- end chronique-txt-->
+
+		<div id="chronique-side">
+
+			<div id="btn-connexion"><img alt="connexion chronique time" src="<?php echo $this->baseUrl('img/general/icon_plus.png');?>" />CONNEXION</div>
+			<div id="dialog-connexion" class="none" title="Connectez-vous : "><br/><?php echo $this->connexion; ?><a href="" title="" class="mdplost">Mot de passe oublié</a></div>
+			
+			
+			<p class="bleu acenter bold f13">COMMENTAIRES</p>	
+			<div id="comm-side">
+				<p>
+					<span class="pseudo-comm bleu f11 bold">Thierry75</span><br/>				
+					<span class="date-comm rose f11 italic">publié le 10/01/2013 à 21h43</span>	
+					<br/><br/>			
+					<span class="txt-comm f11">Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard</span>				
+				</p>
+				<p>
+					<span class="pseudo-comm bleu f11 bold">Mylène78</span><br/>				
+					<span class="date-comm rose f11 italic">publié le 5/01/2013 à 11h23</span>	
+					<br/><br/>			
+					<span class="txt-comm f11">Le faux-texte (également appelé lorem ipsum, lipsum ) est, en imprimerie, un texte sans valeur sémantique, permettant de remplir des pages lors d'une mise.</span>				
+				</p>
+				<p>
+					<span class="pseudo-comm bleu f11 bold">Mylène78</span><br/>				
+					<span class="date-comm rose f11 italic">publié le 5/01/2013 à 11h23</span>	
+					<br/><br/>			
+					<span class="txt-comm f11">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</span>				
+				</p>
+			</div><!-- end comm-side-->
+			<p id="commenter" class="rose commenter">Commenter !</p>
+			<div id="dialog-comm" title="Nouveau commentaire : "><br/><?php echo $this->newCom; ?></div>
+			
+			<br/>
+			
+			<div id="chron-similaires">
+				<p class="bleu acenter bold f13">CHRONIQUES D'AMOUR</p>
+				<p class="chro-similaire"><a href="" title="">Chronique d'une femme amoureuse</a></p>
+				<p class="chro-similaire"><a href="" title="">Chronique d'un homme amoureux</a></p>
+				<p class="chro-similaire"><a href="" title="">Chronique d'une chienne amoureuse</a></p>
+				<p class="chro-similaire"><a href="" title="">Chronique de deux vielles femmes amoureuses</a></p>
+			
+			</div><!-- end chron-similaires-->
+			
+			<br/>
+			
+			<div id="index-theme">
+				<p class="bleu acenter index-side-title">THÈMES</p>
+				<button><a href="" title="">Famille</a></button>
+				<button><a href="" title="">Amour</a></button>
+				<button><a href="" title="">Argent</a></button>
+				<button><a href="" title="">Enfant</a></button>
+			</div><!-- end index-theme-->
+			
+		</div><!-- end chronique-side-->
+	
+	</div>
+</div><!-- end wrapper-->

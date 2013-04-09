@@ -1,0 +1,157 @@
+<script>
+<!-- 
+
+	//Msg de confirmation de suppression
+	$(".suppr").live('click',function() {
+	
+	   var clas = $(this).attr('class').split(' ');
+	   var info = $(this).attr('title').split('&&');
+	   var type = clas['0'];
+	   var name = info['0'];
+	   var id = info['1'];
+	   var x = type+'/id/'+id;
+	
+	   $('#CoDl .supp-txt').html('"'+name+'"');
+	   $( "#CoDl" ).dialog({
+	      resizable: false,
+	      width: 360,
+	      height:200,
+	      modal: true,
+	      buttons: {  
+		      Supprimer: function() { window.location.replace("<?php echo $this->baseUrl('admin/del/cat/');?>"+x);  } ,
+		      Annuler: function() { $( this ).dialog( "close" ); } 
+	      }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	   
+	});
+	
+	//Msg de confirmation de diffusion
+	$(".diff-cm").live('click',function() {
+	
+	   var clas = $(this).attr('class').split(' ');
+	   var info = $(this).attr('title').split('&&');
+	   var valid = info['0'];
+	   var name = info['1'];
+	   var id = info['2'];
+	   var x = 'cm/id/'+id+'/vl/'+valid;
+	
+	   $('#CoDf .diff-txt').html('"'+name+'"');
+	   $("#CoDf").dialog({
+	      resizable: false,
+	      width: 360,
+	      height:200,
+	      modal: true,
+	      buttons: {  
+		      Permuter: function() { window.location.replace("<?php echo $this->baseUrl('admin/diff/cat/');?>"+x);  } , 
+		      Annuler: function() { $( this ).dialog( "close" ); }  
+	      }
+	   });
+	   $('.ui-dialog-buttons .ui-dialog-buttonpane button').attr('class','btn');
+	});
+	
+   //Modal Details
+   $(".details").live('click',function() {
+
+		var pseudo = $('.pseudo',this).html();
+		var pub = $('.pub',this).html();
+		var abus = $('.abus',this).html();
+		var comm = $('.comm',this).html();
+		var chr = $('.chr',this).html();
+		
+		$('#myModal .modal-pseudo').html(pseudo);
+		$('#myModal .modal-pub').html(pub);
+		$('#myModal .modal-abus').html(abus);
+		$('#myModal .modal-comm').html(comm);
+		$('#myModal .modal-chr').html(chr);
+		
+		$('#myModal').modal({
+			backdrop: true,
+			keyboard: true
+		});
+		
+	});
+
+	
+
+//--> 
+</script>
+							
+
+<div id="wrapper">
+	 
+	 <div class="tab-pane fade in active" id="div-commentaires">&nbsp;
+		<table class="table table-striped">
+			<caption><i>Les commentaires sur ChroniqueTime</i></caption>
+			<tr>
+				<th>Chronique</th>
+				<th>Id Page</th>
+				<th>Pseudo</th>
+				<th>Publié le</th>
+				<th>Abus</th>
+				<th>Actions</th>
+			</tr>
+			<?php 
+			 foreach ($this->commentaires as $c) {
+	
+              	$color = ($c->valid == 1 ? "class='green bold'" : "class='red2 bold'");
+				echo'<tr>
+	  					<td>'.$c->chronique.'</td>
+	  					<td>'.$c->page.'</td>
+	  					<td>'.$c->pseudo.'</td>
+	  					<td><span '.$color.'>'.$c->publication.'</span></td>
+	  					<td>'.$c->abus.'</td>
+	  					<td>
+							<div class="btn-group">
+							  <a class="btn btn-primary" data-toggle="dropdown" href="#"><i class="icon-wrench icon-white"></i> Action</a>
+							  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+							  <ul class="dropdown-menu">
+							    <li><a href="#" class="supp-cm suppr" title="'.$c->pseudo.'&&'.$c->id.'"><i class="icon-trash"></i> &nbsp;Effacer</a></li>
+							    <li><a href="#" class="diff-cm" title="'.$c->valid.'&&'.$c->pseudo.'&&'.$c->id.'"><i class="icon-ban-circle"></i> &nbsp;Diffusion</a></li>
+							    <li class="divider"></li>
+							    <li><a href="#" class="details"><i class="i icon-comment"></i> &nbsp;Afficher<span class="pseudo none"><strong>Par :</strong> '.$c->pseudo.' <'.$c->email.'>'.'</span><span class="pub none"><strong>Le :</strong> '.$c->publication.'</span><span class="none abus"><strong>Nbr Abus :</strong> '.' '.$c->abus.'</span><span class="none comm"><strong>Commentaire :</strong>'.' '.$c->comm.'</span><span class="none chr"><strong>Dans : </strong>'.' '.$c->chronique.'</span></a></li>
+							  </ul>
+							</div>
+						</td>
+					</tr>
+	  			';
+			 }
+			?>
+		</table>
+	</div>
+	
+</div>
+
+
+	 <!-- DETAILS myMODAL COMMENTR  -->
+     <div id="myModal" class="modal hide fade none" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">Détails du Commentaire : </h3>
+	  </div>
+	  <div class="modal-body">
+	    <p class="modal-pseudo"></p>
+	    <p class="modal-pub"></p>
+	    <p class="modal-chr"></p>
+	    <p class="modal-comm"></p>
+	    <p class="modal-abus"></p>
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Fermer</button>
+	  </div>
+	</div>
+    <!-- ------------------------ -->
+    
+    <!-- SUPPRIMER COMMENTR ----- -->
+    <div class="none" id="CoDl" title="Suppression commentaire"><br/>
+     	<p style="margin:0; text-align:center;">Êtes vous sûre de vouloir supprimer le<br />commentaire de <span class="supp-txt"></span> <br /> ?</p>
+    </div>
+    <!-- ------------------------ -->
+     
+    <!-- DIFFUSION COMMENTR ----- -->
+    <div class="none" id="CoDf" title="Diffusion "><br/>
+     	<p style="margin:0; text-align:center;">Souhaitez vous changer la diffusion du<br />commentaire de  <span class="diff-txt"></span> <br /> ?</p>
+    </div>
+    <!-- ------------------------ -->
+     
+     

@@ -1,0 +1,22 @@
+<?php 
+
+		foreach($this->chroniques as $c) {
+			
+			echo '
+              		<div class="index-chro theme-chro">
+						<div><img alt="dernière chroniques" src="'.$this->baseUrl('images/chroniques/'.$c->num.'.jpg').'" /></div>
+						<div class="index-chro-right theme-right">
+							<p class="chro-title theme-chro-title">'.$c->titre.'</p>
+							<p class="chro-theme">'.$c->theme.'</p>
+							<p class="chro-text">'.substr($c->texte,0,320).'</p>
+							<p class="chro-comm">'.$c->commentaires.' Commentaires</p>
+							<a href="'.$this->baseUrl('index/chronique/id/'.$c->num).'" title="'.$c->titre.'" class="lire-chronique">Lire la chronique</a>
+							<div class="theme-note" class="article_'.$c->num.'">';
+								for($z=1;$z<6;$z++){ echo  '<img src="'.$this->baseUrl('img/general/star_empty.png').'" width="17" alt="star" class="star_'.$z.'" />'; }
+			 echo          '</div>
+						</div>
+					</div><!-- end index-chro --> ';
+			 
+		}
+		
+?>

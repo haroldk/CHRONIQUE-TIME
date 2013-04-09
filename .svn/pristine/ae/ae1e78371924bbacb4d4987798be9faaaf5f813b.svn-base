@@ -1,0 +1,29 @@
+<?php
+class IndexController extends Zend_Controller_Action
+{
+	function preDispatch() {
+		/*$auth = Zend_Auth::getInstance();
+		$auth = $auth->hasIdentity();
+		if($auth) $this->_redirect('association');
+		*/
+	}
+    public function init()
+    {
+    	$this->initView();
+    	$this->view->baseUrl = $this->_request->getBaseUrl();
+		$connexion = new Application_Form_Connexion();
+		$this->view->connexion = $connexion;
+    }
+
+	function indexAction(){
+				
+	}
+
+	function chroniqueAction(){
+		
+		$NewCommentaire = new Application_Form_Commentaire();	
+		$this->view->newCom = $NewCommentaire;	
+	}
+	
+}
+

@@ -1,0 +1,50 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/apple-slide.css');  ?>"/>
+<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/apple-slide2.js');?>"></script>
+
+
+<div id="top-wrapper"></div>
+<div id="wrapper">
+	<div>
+	
+	<p class="theme-title"><img src="<?php echo $this->baseUrl('img/theme/themes_title.png');?>" alt="chronique-time themes" /></p>
+	
+	<div id="chronique-themes">
+		<div id="main">
+			<div id="gallery" style="width: 1000px;">
+			
+  		  		<div id="slides" style="width: 1000px; height: auto; min-height: 610px;" >
+						
+						<div class="slide" style="width: 1000px; height: 630px;">
+						<?php $i=1;$y=0; foreach($this->themes as $theme ) { $y++; ?>
+						
+				    	
+			    			<div class="theme-div">
+			    				<p class="theme-img"><img src="<?php echo $this->baseUrl('img/theme/'.$theme->theme.'.jpg');?>" alt="chronique-time themes" width="220" /></p>
+			    				<a href="<?php echo $this->baseUrl('index/theme/id/'.$theme->id); ?>"class="theme-btn"></a>
+			    				<p>Nombre de chroniques : <span><?php echo $theme->chroniques; ?></span></p>
+			    			</div>
+				    		
+				    		<?php if($y == 8) { echo '</div><div class="slide" style="width: 1000px; height: 630px;">'; $i++;$y=0; } ?>	
+			    		
+			    		<?php } ?>		
+						</div>
+	  			</div>
+    
+			    <div id="menu" class="pagination">
+				    <ul id="pagination-btn">
+				        <li class="menuItem"><a href="" class="first img-slide pg-btn">1</a></li>
+				        <?php for($n=2; $n<=$i; $n++) { ?>
+				        <li class="menuItem"><a href="" class="img-slide pg-btn"><?php echo $n; ?></a></li>
+				        <?php } ?>
+				    </ul>
+			    </div>
+			    
+		  </div>
+		</div>
+	</div><!-- end chronique-themes-->
+	
+	
+	
+	
+	</div>
+</div><!-- end wrapper-->

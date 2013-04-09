@@ -1,0 +1,18 @@
+<script type="text/javascript">
+<!-- 
+	$(function() {
+		$("textarea#texte").markItUp(mySettings);
+	});
+//--> 
+</script>
+
+<div id="wrapper">
+	
+	<br /><br />
+	<div class="div_sele top-20"><?php echo $this->title;?> Modification &nbsp; : <p><a href="<?php echo $this->baseUrl('admin/'.$this->action); ?>">retour</a></p></div>
+	<div id="admin-form">
+		<?php echo $this->form; ?>
+	</div>
+</div>
+
+  	

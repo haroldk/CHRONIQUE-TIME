@@ -1,0 +1,36 @@
+<?php
+
+class Application_Form_Commentaire extends Zend_Form{
+	
+	public function __construct($options = null){
+		parent::__construct($options);
+		
+		$this->setName('Commentaire');
+		
+		$login =  new Zend_Form_Element_Text('login');
+		$login->setLabel('Nom :')
+		->setRequired(true)
+		->addFilter('StripTags')
+		->addFilter('StringTrim');
+		$login->setAttrib('placeholder','Login');
+
+		$mail =  new Zend_Form_Element_Password('mail');
+		$mail->setLabel('E-mail :')
+		->setRequired(true)
+		->addFilter('StripTags')
+		->addFilter('StringTrim');
+		$mail->setAttrib('placeholder','chronique@time.fr');
+		
+		$commentaire = new Zend_Form_Element_Textarea('commentaire');
+		$commentaire->setLabel('Commentaire :')
+		->setRequired(true)
+		->addFilter('StripTags')
+		->addFilter('StringTrim');
+		
+		$submit = new Zend_Form_Element_Submit('submit');
+		$submit->setAttrib('class','btn btn-primary')->setLabel('Poster');
+		
+		$this->addElements(array($login,$mail, $commentaire, $submit));
+			
+	}
+}

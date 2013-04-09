@@ -1,0 +1,20 @@
+	
+	<?php $i=0; foreach ($this->commentaires as $com ) { $i++;	}?>		
+	
+	
+<p class="bleu acenter bold f13">COMMENTAIRES</p>
+
+<div id="comm-side"> <span class="sup">(<?php echo $i; ?>)</span><?php
+
+	foreach ($this->commentaires as $com ) { 	?>
+	
+		<p>
+			<span class="pseudo-comm bleu f11 bold"><?php echo $com->pseudo; ?></span><br/>				
+			<span class="date-comm rose f11 italic">publié le <?php echo $com->publication; ?></span>	
+			<br/><br/>			
+			<span class="txt-comm f11" ><?php echo $com->comm; ?></span>
+		</p><?php 
+		
+	} ?>
+
+</div>

@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="TITLE" content="CHRONIQUE-TIME:BACK-OFFICE:BAILDY-GROUP" />
+	<meta name="DESCRIPTION" content="" />
+	<meta name="KEYWORDS" content="" />
+	<meta name="SUBJECT" content="" />
+	<meta name="CATEGORY" content="" />
+	<meta name="AUTHOR" content="Baildy Group" />
+	<meta name="REVISIT-AFTER" content="7 DAYS" />
+	<meta name="LANGUAGE" content="FR" />
+	<meta name="ROBOTS" content="All" />
+	<meta http-equiv="REFRESH" content="Non" />
+	
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/global-admin.css');  ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/bootstrap.css');  ?>" />
+	
+	
+	<title>Back-Office Baildy</title>
+</head>
+<body>
+<noscript><h1 align="center"><font color="red">JavaScript est désactivé, veuillez le réactiver svp !</font></h1></noscript> 
+
+	<div id="back_header2">
+		
+	</div><!-- fin baildy_header -->
+	
+	<div id="back_container2">
+		<div id="backof">
+			<span>BACK-OFFICE</span>
+			<?php echo $this->layout()->content; ?>
+			&nbsp;
+		</div>
+	</div><!-- fin container -->
+	<div id="back_footer1">
+		<div id="back_pied">
+			<p id="pied1">Back-Office <a href="<?php echo $this->baseUrl('');?>" class="white"><font color="black">Chronique</font><font color="#C90F28" style="font-weight:lighter">Time</font></a></p>
+			<a href="http://baildy.fr/"><img src="<?php echo $this->baseUrl('img/backoffice/logo_normal.png');?>" width="100" alt="baildy group" /></a>
+			<p id="pied2">Réalisé par </p>
+		</div>
+	</div><!-- fin footer -->
+</body>
+</html>
+
+
+
+
+

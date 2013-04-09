@@ -1,0 +1,175 @@
+<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/apple-slide.css');  ?>"/>
+<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/apple-slide.js');?>"></script>
+
+<script>
+  $(function() {
+
+	  	$(".first img").animate({
+          "marginTop" : "-30px"
+ 		}, 200);	
+ 		
+	  	$( ".img-slide" ).live('click',function(){
+		  	
+	  		//$(".img-slide img").removeAttr("style",1000,"easeInBack"); 
+	  		$( ".img-slide img" ).effect( "size", { to: { marginTop: 0 } }, 200 );
+			$("img",this).animate({
+                "marginTop" : "-30px"
+       		}, 200);			
+	  	});
+
+	  	$(function(){
+	  	    $('.box_skitter_small').skitter({
+		  	    height_label: '25px',
+		  	  	numbers: false,
+		  	  	interval: 2500,
+		  	  	animation: 'cubeStopRandom',
+
+		  	 });
+	  	});
+	  
+  });
+</script>
+
+<div id="main" class="slide1 acenter">
+	<div id="gallery" class="galindex">
+	
+	    <div id="slides">
+	    
+		    <div class="slide"><a href="<?php echo $this->baseUrl('index/chronique');?>" title=""><img src="<?php echo $this->baseUrl('img/index/photo_chroniquedujour.png');?>" alt="" /></a><p class="slide-title">Chroniques du jour</p><p class="slide-article"><a href="<?php echo $this->baseUrl('index/chronique');?>" title="">Chronique d'une fille de 14 ans qui tombe enceinte</a></p></div>
+		    <div class="slide"><a href="<?php echo $this->baseUrl('index/chronique');?>" title=""><img src="<?php echo $this->baseUrl('img/index/03-01-2.jpg');?>" alt="" /></a><p class="slide-title">Chroniques du jour</p><p class="slide-article"><a href="<?php echo $this->baseUrl('index/chronique');?>" title="">Chronique de deux vielles femmes</a></p></div>
+		    <div class="slide"><a href="<?php echo $this->baseUrl('index/chronique');?>" title=""><img src="<?php echo $this->baseUrl('img/index/chiennes.jpg');?>" alt="" /></a><p class="slide-title">Chroniques du jour</p><p class="slide-article"><a href="<?php echo $this->baseUrl('index/chronique');?>" title="">Chronique d'une chienne amoureuse</a></p></div>
+		    <!--<div class="slide"><img src="img/sample_slides/imac.jpg" width="920" height="400" alt="side" /></div>-->
+	      
+	    </div>
+	    
+	    <div id="menu">
+	    
+		    <ul>
+		        <li class="menuItem"><a href="" class="first img-slide"><img src="<?php echo $this->baseUrl('img/index/photo_chroniquedujour.png');?>" alt="" width="110"/></a></li>
+		        <li class="menuItem"><a href="" class="img-slide"><img src="<?php echo $this->baseUrl('img/index/03-01-2.jpg');?>" alt="" width="110" /></a></li>
+		        <li class="menuItem"><a href="" class="img-slide"><img src="<?php echo $this->baseUrl('img/index/chiennes.jpg');?>" alt="thumbnail" /></a></li>
+		        <li class="menuItem"><a href="" class="img-slide"><img src="<?php echo $this->baseUrl('images/miniatures/min4.png');?>" alt="thumbnail" /></a></li>
+		        <li class="menuItem"><a href="" class="img-slide"><img src="<?php echo $this->baseUrl('images/miniatures/min6.png');?>" alt="thumbnail" /></a></li>
+		        <li class="menuItem"><a href="" class="img-slide"><img src="<?php echo $this->baseUrl('images/miniatures/min8.png');?>" alt="thumbnail" /></a></li>
+		        <li class="menuItem"><a href="" class="img-slide"><img src="<?php echo $this->baseUrl('images/miniatures/min5.png');?>" alt="thumbnail" /></a></li>
+		    </ul>
+	    
+	    </div>
+    
+  </div>
+</div>
+
+<div id="wrapper">
+	<div>
+	
+		<div id="div-index">
+			<div id="dern-chro">
+				<img alt="dernière chroniques" src="<?php echo $this->baseUrl('img/index/dern_chron.png');?>" />
+				<?php 
+              			foreach ($this->dernieres as $c) {		 
+              	
+              				echo '
+	              				<div class="index-chro">
+									<div><img alt="dernière chroniques" src="'.$this->baseUrl('images/chroniques/'.$c->num.'.jpg').'" /></div>
+									<div class="index-chro-right">
+										<p class="chro-title">'.$c->titre.'</p>
+										<p class="chro-theme">'.$c->theme.'</p>
+										<p class="chro-text">'.substr($c->texte,0,150).'</p>
+										<p class="chro-comm">'.$c->commentaires.' Commentaires</p>
+										<a href="'.$this->baseUrl('index/chronique/id/'.$c->num).'" title="'.$c->titre.'" class="lire-chronique">Lire la chronique</a>
+										<div class="note-etoiles"><img alt="" src="'.$this->baseUrl('img/index/etoiles.jpg').'" /> </div>
+									</div>
+								</div><!-- end index-chro -->
+              				';
+              				
+              		 	} 	 ?>
+
+				<p id="allchro"><a href="" title="">• TOUTES LES CHRONIQUES •</a></p>
+			</div><!-- end dern-chro -->
+			
+			<div id="top-chro">
+				<div style="height:60px;"><img alt="top 5 chroniques" src="<?php echo $this->baseUrl('img/index/top5.png');?>" /></div>
+				<?php 	$i=1;
+              			foreach ($this->top5 as $c) {		 
+              				
+              				echo '
+				
+								<div class="top-chronique">
+									<img alt="chronique time top numero '.$i.'" src="'.$this->baseUrl('img/index/top_'.$i.'.png').'" width="20" />
+									<a href="" title=""><img alt="'.$c->titre.'" src="'.$this->baseUrl('images/chroniques/'.$c->num.'.jpg').'" width="35" class="top-miniature"/></a>
+									<p><span class="p1"><a href="'.$this->baseUrl('index/chronique/id/'.$c->num).'" title="'.$c->titre.'">'.$c->titre.'</a></span><br/><span class="p2">'.$c->visites.' vues</span></p>
+								</div><!-- end top-chronique -->
+							';
+              				
+							$i++;
+              			}
+              	?>
+				
+			
+			</div><!-- end top-chro -->
+			
+			
+			<div id="index-conseil">
+				<img alt="Conseil des internautes" src="<?php echo $this->baseUrl('img/index/conseil.png');?>" />
+				<div class="box_skitter box_skitter_small">
+	
+				    <ul>  <?php 
+				    		
+				    	foreach ($this->reco as $c) {	?>
+				    		
+				        <li>
+				        	<p class="rose acenter"><?php echo $c->login; ?> vous recommande</p>
+				            <a href="<?php echo $this->baseUrl('index/chronique/id/'.$c->id); ?>"><img alt="<?php echo $c->titre; ?>" class="img-conseil block" src="<?php echo $this->baseUrl('images/chroniques/'.$c->id.'.jpg');?>" /></a>
+							<p class="bleu acenter italic"><?php echo $c->titre; ?></p>
+							<p class="rose acenter italic" style="margin:0;"><?php echo $c->vue; ?> vues</p>
+				            <div class="label_text">
+				                <p><?php echo $c->titre; ?></p>
+				            </div>
+				        </li>  
+				        		<?php 
+				        } 		?>
+				        
+				    </ul>
+				
+				</div>
+			</div><!-- end index-conseil-->
+			
+			
+		</div><!-- end div-index-->
+			
+				
+		<div id="index-side">
+		
+			<div id="index-connexion">
+				<p class="bleu acenter index-side-title">CONNEXION</p>
+				<div id="div-conn"><?php echo $this->connexion; ?></div>
+				<p class="bleu acenter index-insc-title index-side-title">PAS ENCORE INSCRIT ?</p>
+				<p class="bleu f11" style=" width:225px; margin: 0 auto; text-align: center;">rejoignez-nous dès maintenant afin de profiter au maximum des chroniques</p>
+				<p class="btn-inscription"><a href="<?php echo $this->baseUrl('index/inscription'); ?>" title="inscription chronque time"></a></p>
+			</div><!-- end index-connexion-->
+		
+			<div id="index-theme">
+				<p class="bleu acenter index-side-title">THÈMES</p>
+				<?php 
+				foreach ($this->themes as $th) { ?>
+					<button><a href="<?php echo $th->id; ?>" title="<?php echo $th->libele; ?>"><?php echo $th->libele; ?></a></button>
+				<?php 
+				}	?>
+			</div><!-- end index-theme-->
+		
+			<div id="index-fb">
+				<iframe src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Fpages%2FChronique-Time%2F520012011364663&amp;width=250&amp;height=258&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;border_color=white&amp;header=false&amp;appId=151983048230591" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:250px; height:258px;" allowTransparency="true"></iframe>
+			</div><!-- end index-fb-->
+		
+		</div>
+
+	</div><!-- end wrapper->div -->
+</div><!-- end wrapper -->
+
+<div id="register-ok" class="none" title="Inscription réussite"><br/>
+	<p class="acenter">Votre compte a été créé avec succès, veuillez cependant le valider via le mail reçu dans votre boîte mail précédement renseignée.</p>
+</div>
+<div id="valid-ok" class="none" title="Compte validé"><br />
+	<p class="acenter">Votre compte a bien été validé.<br /> Connectez-vous afin d'en profiter !</p>
+</div>
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="TITLE" content="" />
+	<meta name="DESCRIPTION" content="" />
+	<meta name="KEYWORDS" content="" />
+	<meta name="SUBJECT" content="" />
+	<meta name="CATEGORY" content="" />
+	<meta name="AUTHOR" content="Baildy Group" />
+	<meta name="REVISIT-AFTER" content="7 DAYS" />
+	<meta name="LANGUAGE" content="FR" />
+	<meta name="ROBOTS" content="All" />
+	<meta http-equiv="REFRESH" content="Non" />
+	
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/global-admin.css');  ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/bootstrap.css');  ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/bootstrap2.css');  ?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/jquery.fancybox.css');  ?>"/>
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/jquery-ui-1.9.0.custom.css');?>" />
+	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl('css/markitup.css');?>" />
+	
+	
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/jquery-1.8.2.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/jquery-ui-1.9.0.custom.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/bootstrap.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/jquery.markitup.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/set.js');?>"></script>
+	<script type="text/javascript" src="<?php echo $this->baseUrl('JQuery/package.json');?>"></script>
+	
+	
+	<title>Chronique T : BackOffice</title>
+</head>
+<body>
+<noscript><h1 align="center"><font color="red">JavaScript est désactivé, veuillez le réactiver svp !</font></h1></noscript> 
+
+<?php
+	$controller = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+	$action = Zend_Controller_Front::getInstance()->getRequest()->getActionName();
+?>
+
+	<div id="back_header">
+		
+		<div id="back_bg">
+			<?php 
+				$auth = Zend_Auth::getInstance();
+				 if(isset($auth->getIdentity()->login)) { ?>
+					<a href="http://baildy.fr/" target="_blank"><img src="<?php echo $this->baseUrl('img/backoffice/logo_blanc.png'); ?>" style="border:0;" alt="" title="Baildy" width="90" /> </a>
+					<p><a href="<?php echo $this->baseUrl('');?>auth/logout" class="white bo_deconnexion">déconnexion</a></p>
+			<?php }?>
+		</div><!-- end Baildy_bg -->
+		<div id="back_menu">
+			<div id="txt_backoffice" class=" <?php if($action != "index" OR $action != "" ) echo 'bo-disabled'; else echo 'bo-active'; ?> "><a href="<?php echo $this->baseUrl('');?>admin/" title="Tableau de bord"  class=" <?php if($action != "index" OR $action != "" ) echo 'bo-disabled'; else echo 'bo-active'; ?> " ><font color="#0077AF">Back</font><font color="#c906a8">Office</font></a></div>
+			<div id="back_m">
+			  <ul>
+				<li class="btn btn-info <?php if($action != "chroniques") echo 'disabled'; else echo 'activeshadow'; ?> "><a href="<?php echo $this->baseUrl('');?>admin/chroniques">	CHRONIQUES	</a></li>
+				<li class="btn btn-info <?php if($action != "utilisateurs") echo 'disabled'; else echo 'activeshadow'; ?> "><a href="<?php echo $this->baseUrl('');?>admin/utilisateurs">	COMMUNAUTÉE	</a></li>
+				<li class="btn btn-info <?php if($action != "commentaires") echo 'disabled'; else echo 'activeshadow'; ?> "><a href="<?php echo $this->baseUrl('');?>admin/commentaires">	COMMENTAIRES 	</a></li>
+				<li class="btn btn-info <?php if($action != "search" ) echo 'disabled'; else echo 'activeshadow'; ?> "><a href="<?php echo $this->baseUrl('');?>admin/search">	RECHERCHES 	</a></li>
+	   		</ul>
+			</div><!-- fin back_m -->
+		</div><!-- fin back_menu -->
+	</div><!-- fin baildy_header -->
+	
+
+	<div id="back_container">
+	<div id="div-img-admin">
+		<img src="<?php echo $this->baseUrl('img/backoffice/interface_admin.png');?>" alt="interface admin" width="400" id="img-admin"/>
+		<?php echo $this->layout()->content; ?>
+	</div>	
+	</div><!-- fin container -->
+	<div id="back_footer">
+		<div id="back_pied">
+			<p id="pied1">Back-Office <a href="<?php echo $this->baseUrl('');?>" class="white"><font color="black">Chronique</font><font color="#C90F28" style="font-weight:lighter">Time</font></a></p>
+			<a href="http://baildy.fr/"><img src="<?php echo $this->baseUrl('img/backoffice/logo_normal.png');?>" width="100" alt="baildy group" /></a>
+			<p id="pied2">Réalisé par </p>
+		</div>
+	</div><!-- fin footer -->
+</body>
+</html>
+
+
+
+
+
